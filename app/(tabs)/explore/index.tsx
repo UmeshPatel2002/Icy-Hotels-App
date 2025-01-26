@@ -58,13 +58,16 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
         params: { qs: selectedCity },
       });
       if (res.status === 200) {
-        dispatch(setHotels(res.data));
+      dispatch(setHotels(res.data));
+      setLoading(false);
+
       }
     } catch (error) {
       dispatch(setHotels([]))
-      console.error("Error fetching hotels:", error);
+      setLoading(false);
+
+      console.error("Error fetching hotels by city:", error);
     } finally {
-     
       setLoading(false);
     }
   };

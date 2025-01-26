@@ -10,7 +10,7 @@ export default function RootLayout() {
   
       <Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="booking/index" />
+        <Stack.Screen name="booking" />
        
       </Stack>
      
