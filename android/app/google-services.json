@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "28686144736",
+    "project_id": "icyhotels-b6ec3",
+    "storage_bucket": "icyhotels-b6ec3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28686144736:android:c3d7392dae616483d8ec85",
+        "android_client_info": {
+          "package_name": "com.icyhotels.IcyHotels"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-UXxEQe_2W1j0nvhmvo4bQid6UoWxNog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
