@@ -4,6 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import axios from 'axios';
+import { baseUrl } from '@/constants/server';
+import { useDispatch } from 'react-redux';
+import { setPhone, setUserDetails } from '@/redux/reducers/userSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const index = () => {
 
@@ -12,16 +17,19 @@ const index = () => {
     const [confirm, setConfirm] = useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
     const [code, setCode] = useState<string>('');
     const [phoneNumber, setPhoneNumber] = useState<string>("");
-
+  const [loading, setLoading] = useState(false);
     const router = useRouter();
-
+const dispatch=useDispatch();
 
     const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
         if (user) {
             // Android devices can automatically process the verification code (OTP) message.
             // Notify the user they have successfully logged in and navigate away if required.
-            console.log('userDetails', user);
-            Alert.alert('Login Successful', 'You are now logged in.');
+            console.log('userDetails', user?.phoneNumber);
+            dispatch(setPhone(user?.phoneNumber));
+            verifyUser(user);
+          console.log("You have successfully logged in")
+            // Alert.alert('Login Successful', 'You are now logged in.');
             // Add navigation logic here if needed
         }
     };
@@ -29,6 +37,33 @@ const index = () => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber; // unsubscribe on unmount
     }, []);
+
+
+    const verifyUser=async(user:any)=>{
+    console.log("verifying",user?.phoneNumber);
+    
+        try {
+            const res=await axios.get(`${baseUrl}/users/check-user`,{
+                params:{
+                    phoneNumber:user?.phoneNumber
+                }
+            });
+            console.log(res.data);
+            if(res?.data?.exists){
+                dispatch(setUserDetails(res.data.data));
+                await AsyncStorage.setItem('userDetails', JSON.stringify(res?.data?.data));
+                router.back();
+                return;
+            }
+            else{
+                router.replace("/profile/SignUpScreen");
+                return;
+            }
+            
+        } catch (error) {
+            console.log("error in verifying",error)
+        }
+    }
 
 
     const signInWithPhoneNumber = async (phoneNumber: string) => {
@@ -46,16 +81,21 @@ const index = () => {
     };
 
     const confirmCode = async () => {
+
+
         if (!confirm) {
             Alert.alert('Error', 'No confirmation object found.');
             return;
         }
+        setLoading(true);
 
         try {
             const res=await confirm.confirm(code);
             console.log(res);
-            Alert.alert('Success', 'Code confirmed, you are now logged in.');
+            verifyUser(res?.user);
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.error('Invalid code:', error);
             Alert.alert('Error', 'Invalid verification code. Please try again.');
         }
@@ -84,7 +124,7 @@ const index = () => {
                     borderTopColor: '#7c7c7c',
                     borderTopLeftRadius: 20,
                     borderTopRightRadius: 20,
-                    borderRadius: 20,
+                    // borderRadius: 20,
                     borderWidth: 1,
                     borderBottomWidth: 0,
                     paddingVertical: 30,
@@ -195,7 +235,7 @@ const index = () => {
                     borderTopColor: '#7c7c7c',
                     borderTopLeftRadius: 20,
                     borderTopRightRadius: 20,
-                    borderRadius: 20,
+                    // borderRadius: 20,
                     borderWidth: 1,
                     borderBottomWidth: 0,
                     paddingVertical: 30,
@@ -257,6 +297,7 @@ const index = () => {
                         confirmCode();
                         // router.push('/(tabs)')
                     }}
+                    disabled={loading}
                     style={{
                         backgroundColor: '#ffb000',
                         marginTop: 20,
@@ -271,17 +312,33 @@ const index = () => {
                         elevation: 6
                     }}
                 >
-                    <Text
-                        style={{
-                            fontFamily: 'Poppins-SemiBold',
-                            color: 'white',
-                            fontSize: 18,
-                            textAlign: 'center',
-                            paddingVertical: 8,
-                        }}
-                    >
-                        Continue
-                    </Text>
+                    {
+                        loading?(<Text
+                            style={{
+                                fontFamily: 'Poppins-SemiBold',
+                                color: 'white',
+                                fontSize: 18,
+                                textAlign: 'center',
+                                paddingVertical: 8,
+                            }}
+                        >
+                            Verifying...
+                        </Text>):
+                        (
+                            <Text
+                            style={{
+                                fontFamily: 'Poppins-SemiBold',
+                                color: 'white',
+                                fontSize: 18,
+                                textAlign: 'center',
+                                paddingVertical: 8,
+                            }}
+                        >
+                            Continue
+                        </Text>
+                        )
+                    }
+                    
                 </TouchableOpacity>
             </View>}
 

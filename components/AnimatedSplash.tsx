@@ -7,13 +7,14 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import * as SplashScreen from "expo-splash-screen";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
 SplashScreen.preventAutoHideAsync();
 
 interface AnimatedSplashScreenProps {
-  onAnimationFinish: () => void;
+  onAnimationFinish: () =>void ;
 }
 
 const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
@@ -21,6 +22,7 @@ const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
 }) => {
   const opacity = useSharedValue(1);
   const scale = useSharedValue(1);
+  const router=useRouter();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -30,8 +32,8 @@ const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
       setTimeout(() => {
         SplashScreen.hideAsync();
         onAnimationFinish();
-      }, 1000);
-    }, 1500);
+      }, 0);
+    }, 2000);
 
     return () => clearTimeout(timeout);
   }, [opacity, scale]);
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff", // Match splash background color
+    backgroundColor: "#fff", // Match splash background color
   },
   image: {
     width: width * 0.5,

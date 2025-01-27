@@ -1,400 +1,309 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ListRenderItem } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { baseUrl } from "@/constants/server";
+import { Ionicons } from "@expo/vector-icons";
 
-interface Booking {
-    id: string;
-    hotel: string;
-    date: string;
-}
+const HistoryScreen = () => {
+  const [activeTab, setActiveTab] = useState<"Upcoming" | "Recent">("Upcoming");
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: any) => state.user.userDetails);
 
-const HistoryScreen: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'Upcoming' | 'Recent'>('Upcoming');
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/booking/upcoming-bookings`, {
+        params: { userId: user?._id },
+      });
+      if (response.data) {
+        setBookings(response.data.bookings);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const upcomingBookings: Booking[] = [
-        { id: '1', hotel: 'Grand Palace Hotel', date: '2025-02-15' },
-        { id: '2', hotel: 'Ocean View Resort', date: '2025-03-10' },
-    ];
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
-    const recentBookings: Booking[] = [
-        { id: '3', hotel: 'Mountain Retreat', date: '2024-12-20' },
-        { id: '4', hotel: 'City Lights Hotel', date: '2024-11-05' },
-    ];
+  const filterBookings = (tab: "Upcoming" | "Recent") => {
+    const now = new Date();
+    return tab === "Upcoming"
+      ? bookings.filter((booking) => new Date(booking.checkInDate) >= now)
+      : bookings.filter((booking) => new Date(booking.checkInDate) < now);
+  };
 
-    const renderBooking: ListRenderItem<Booking> = ({ item }) => (
-        <View style={{
-            backgroundColor: '#fff',
-            padding: 15,
-            borderRadius: 10,
-            marginBottom: 15,
-            elevation: 3,
-        }}>
-            <Text style={{
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: '#333',
-            }}>{item.hotel}</Text>
-            <Text style={{
-                fontSize: 14,
-                color: '#666',
-                marginTop: 5,
-            }}>{item.date}</Text>
-        </View>
-    );
 
-    // Combine tabs and booking list into a single FlatList
-    const renderTabContent = (activeTab: string) => {
-        const data = activeTab === 'Upcoming' ? upcomingBookings : recentBookings;
-        return (
-            <FlatList
-                data={data}
-                renderItem={renderBooking}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingBottom: 20 }}
-                ListEmptyComponent={<Text style={{
-                    textAlign: 'center',
-                    marginTop: 20,
-                    fontSize: 16,
-                    color: '#999',
-                }}>No bookings found.</Text>}
-            />
-        );
-    };
 
+const renderBooking = ({ item }: { item: any }) => (
+  <View
+    style={{
+      backgroundColor: "#f9fafb",
+      padding: 20,
+      borderRadius: 16,
+      marginBottom: 20,
+      margin: 20, 
+      shadowColor: "#000",
+      shadowOpacity: 0.2,
+      shadowOffset: { width: 0, height: 4 },
+      shadowRadius: 6,
+      elevation: 6,
+      borderWidth: 1,
+      borderColor: "#e5e7eb",
+    }}
+  >
+    {/* Header with Icon */}
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 16,
+      }}
+    >
+      <Ionicons
+        name="bed"
+        size={28}
+        color="#6366f1"
+        style={{ marginRight: 10 }}
+      />
+      <View>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "#1f2937",
+          }}
+        >
+          {item.room.roomType}
+        </Text>
+        <Text style={{ fontSize: 12, color: "#9ca3af" }}>
+          Booking ID: {item._id}
+        </Text>
+      </View>
+    </View>
+
+    {/* Divider */}
+    <View
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: "#e5e7eb",
+        marginVertical: 10,
+      }}
+    ></View>
+
+    {/* Booking Details */}
+    <View style={{ marginBottom: 12 }}>
+      <DetailRow
+        label="Hotel ID"
+        value={item.room.hotelId}
+        icon="business"
+        iconColor="#10b981"
+      />
+      <DetailRow
+        label="Check-In"
+        value={new Date(item.checkInDate).toLocaleDateString()}
+        icon="calendar"
+        iconColor="#3b82f6"
+      />
+      <DetailRow
+        label="Check-Out"
+        value={new Date(item.checkOutDate).toLocaleDateString()}
+        icon="calendar"
+        iconColor="#ef4444"
+      />
+      <DetailRow
+        label="Total Price"
+        value={`₹${item.totalPrice}`}
+        icon="pricetag"
+        iconColor="#f59e0b"
+        isBold
+      />
+      <DetailRow
+        label="Payment Status"
+        value={item.paymentStatus}
+        icon="wallet"
+        iconColor={item.paymentStatus === "Paid" ? "#10b981" : "#f43f5e"}
+        isHighlight
+      />
+      <DetailRow
+        label="Status"
+        value={item.status}
+        icon="checkmark-circle"
+        iconColor="#6366f1"
+      />
+    </View>
+  </View>
+);
+
+const DetailRow = ({
+  label,
+  value,
+  icon,
+  iconColor,
+  isBold,
+  isHighlight,
+}: {
+  label: string;
+  value: string;
+  icon: string;
+  iconColor: string;
+  isBold?: boolean;
+  isHighlight?: boolean;
+}) => (
+  <View
+    style={{
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    }}
+  >
+    <Ionicons
+      name={icon}
+      size={20}
+      color={iconColor}
+      style={{ marginRight: 10 }}
+    />
+    <Text
+      style={{
+        flex: 1,
+        fontSize: 14,
+        color: "#6b7280",
+        fontWeight: "500",
+      }}
+    >
+      {label}
+    </Text>
+    <Text
+      style={{
+        fontSize: 14,
+        color: isHighlight
+          ? value === "Paid"
+            ? "#10b981"
+            : "#f43f5e"
+          : "#1f2937",
+        fontWeight: isBold ? "bold" : "normal",
+      }}
+    >
+      {value}
+    </Text>
+  </View>
+);
+
+  
+
+  if (loading) {
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-            <FlatList
-                ListHeaderComponent={
-                    <View style={{
-                        padding: 20,
-                        backgroundColor: '#f9f9f9',
-                    }}>
-                        {/* Tabs */}
-                        <View style={{
-                            flexDirection: 'row',
-                            marginBottom: 20,
-                            borderRadius: 10,
-                            overflow: 'hidden',
-                        }}>
-                            <TouchableOpacity
-                                style={{
-                                    flex: 1,
-                                    padding: 15,
-                                    backgroundColor: activeTab === 'Upcoming' ? '#ffb000' : '#e0e0e0',
-                                    alignItems: 'center',
-                                }}
-                                onPress={() => setActiveTab('Upcoming')}
-                            >
-                                <Text style={{
-                                    fontSize: 16,
-                                    color: activeTab === 'Upcoming' ? '#fff' : '#333',
-                                    fontWeight: 'bold',
-                                }}>Upcoming</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    flex: 1,
-                                    padding: 15,
-                                    backgroundColor: activeTab === 'Recent' ? '#ffb000' : '#e0e0e0',
-                                    alignItems: 'center',
-                                }}
-                                onPress={() => setActiveTab('Recent')}
-                            >
-                                <Text style={{
-                                    fontSize: 16,
-                                    color: activeTab === 'Recent' ? '#fff' : '#333',
-                                    fontWeight: 'bold',
-                                }}>Recent</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                }
-                data={[]}
-                renderItem={() => renderTabContent(activeTab)} // Content updates based on active tab
-                keyExtractor={() => 'dummyKey'} // Placeholder key as no items for FlatList
-                ListFooterComponent={<View style={{ paddingBottom: 20 }} />}
-            />
-        </SafeAreaView>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <ActivityIndicator size="large" color="#ffb000" />
+      </SafeAreaView>
     );
+  }
+
+  const data = filterBookings(activeTab);
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
+      <View style={{marginBottom:120 }}>
+        {/* Tabs */}
+        <Text
+  style={{
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1f2937",
+    textAlign: "center",
+    marginBottom:10,
+    marginTop:20
+  }}
+>
+  Booking History
+</Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 20,
+            borderRadius: 12,
+            margin:20,
+            overflow: "hidden",
+            backgroundColor: "#e6e6e6",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              backgroundColor: activeTab === "Upcoming" ? "#ffb000" : "#e6e6e6",
+              alignItems: "center",
+            }}
+            onPress={() => setActiveTab("Upcoming")}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: activeTab === "Upcoming" ? "#fff" : "#333",
+                fontWeight: "bold",
+              }}
+            >
+              Upcoming
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              backgroundColor: activeTab === "Recent" ? "#ffb000" : "#e6e6e6",
+              alignItems: "center",
+            }}
+            onPress={() => setActiveTab("Recent")}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: activeTab === "Recent" ? "#fff" : "#333",
+                fontWeight: "bold",
+              }}
+            >
+              Recent
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Booking List */}
+        <FlatList
+          data={data}
+          renderItem={renderBooking}
+          keyExtractor={(item) => item._id}
+          ListEmptyComponent={
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 20,
+                fontSize: 16,
+                color: "#999",
+              }}
+            >
+              No bookings found.
+            </Text>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      </View>
+    </SafeAreaView>
+  );
 };
 
 export default HistoryScreen;
-
-
-// import React, { useState } from "react";
-// import {
-//   ScrollView,
-//   View,
-//   Text,
-//   TextInput,
-//   TouchableOpacity,
-//   StyleSheet,
-//   Alert,
-// } from "react-native";
-// import * as ImagePicker from "expo-image-picker";
-// import { SafeAreaView } from "react-native-safe-area-context";
-
-// type FormState = {
-//   name: string;
-//   owner: string;
-//   hotelAddress: string;
-//   hotelCity: string;
-//   hotelState: string;
-//   description: string;
-//   hotelAmenities: string[];
-//   hotelCategory: string;
-//   alphaRooms: string;
-//   betaRooms: string;
-//   gammaRooms: string;
-//   alphaPrice: string;
-//   betaPrice: string;
-//   gammaPrice: string;
-//   images: string[];
-// };
-
-// const History: React.FC = () => {
-//   const [form, setForm] = useState<FormState>({
-//     name: "",
-//     owner: "",
-//     hotelAddress: "",
-//     hotelCity: "",
-//     hotelState: "",
-//     description: "",
-//     hotelAmenities: [],
-//     hotelCategory: "ICY YELLOW",
-//     alphaRooms: "",
-//     betaRooms: "",
-//     gammaRooms: "",
-//     alphaPrice: "",
-//     betaPrice: "",
-//     gammaPrice: "",
-//     images: [],
-//   });
-
-//   const handleInputChange = (field: keyof FormState, value: string) => {
-//     setForm((prev) => ({
-//       ...prev,
-//       [field]: value,
-//     }));
-//   };
-
-//   const handleImageUpload = async () => {
-//     const result = await ImagePicker.launchImageLibraryAsync({
-//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-//       allowsMultipleSelection: true,
-//       selectionLimit:10,
-//       quality: 0.8,
-//     });
-
-//     if (!result.canceled) {
-//       const selectedImages = result.assets.map((asset) => asset.uri);
-//       setForm((prev) => ({
-//         ...prev,
-//         images: [...prev.images, ...selectedImages],
-//       }));
-//     }
-//   };
-
-//   const handleSubmit = async () => {
-//     if (
-//       !form.name ||
-//       !form.owner ||
-//       !form.description ||
-//       !form.hotelAmenities.length ||
-//       !form.alphaRooms ||
-//       !form.betaRooms ||
-//       !form.gammaRooms
-//     ) {
-//       Alert.alert("Error", "All required fields must be filled");
-//       return;
-//     }
-
-//     try {
-//       const formData = new FormData();
-
-//       Object.keys(form).forEach((key) => {
-//         const field = key as keyof FormState;
-//         if (field === "images") {
-//           form.images.forEach((imageUri, index) => {
-//             formData.append("images", {
-//               uri: imageUri,
-//               type: "image/jpeg",
-//               name: `image_${index}.jpg`,
-//             } as any);
-//           });
-//         } else if (field === "hotelAmenities") {
-//           formData.append(field, JSON.stringify(form[field]));
-//         } else {
-//           formData.append(field, form[field]);
-//         }
-//       });
-
-//       const response = await fetch("http://your-backend-endpoint/api/hotels", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//         body: formData,
-//       });
-
-//       const result = await response.json();
-//       if (response.ok) {
-//         Alert.alert("Success", "Hotel created successfully!");
-//       } else {
-//         Alert.alert("Error", result.message || "Failed to create hotel");
-//       }
-//     } catch (error) {
-//       Alert.alert("Error", "An error occurred while creating the hotel");
-//     }
-//   };
-
-//   return (
-//     <SafeAreaView>
-//     <ScrollView contentContainerStyle={{ padding: 16 }}>
-//       <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 16 }}>
-//         Create Hotel
-//       </Text>
-
-//       <TextInput
-//         placeholder="Hotel Name *"
-//         style={styles.input}
-//         value={form.name}
-//         onChangeText={(value) => handleInputChange("name", value)}
-//       />
-
-//       <TextInput
-//         placeholder="Owner *"
-//         style={styles.input}
-//         value={form.owner}
-//         onChangeText={(value) => handleInputChange("owner", value)}
-//       />
-
-//       <TextInput
-//         placeholder="Hotel Address"
-//         style={styles.input}
-//         value={form.hotelAddress}
-//         onChangeText={(value) => handleInputChange("hotelAddress", value)}
-//       />
-
-//       <TextInput
-//         placeholder="City"
-//         style={styles.input}
-//         value={form.hotelCity}
-//         onChangeText={(value) => handleInputChange("hotelCity", value)}
-//       />
-
-//       <TextInput
-//         placeholder="State"
-//         style={styles.input}
-//         value={form.hotelState}
-//         onChangeText={(value) => handleInputChange("hotelState", value)}
-//       />
-
-//       <TextInput
-//         placeholder="Description *"
-//         style={{ ...styles.input, height: 80, textAlignVertical: "top" }}
-//         value={form.description}
-//         multiline
-//         onChangeText={(value) => handleInputChange("description", value)}
-//       />
-
-//       <TextInput
-//         placeholder="Hotel Amenities "
-//         style={styles.input}
-//         value={form.hotelAmenities.join(", ")}
-//         onChangeText={(value) =>
-//           handleInputChange(
-//             "hotelAmenities",
-//             value.split(",").map((item) => item.trim())
-//           )
-//         }
-//       />
-
-//       <Text style={{ marginBottom: 8, fontWeight: "bold" }}>Category *</Text>
-//       <View style={{ flexDirection: "row", marginBottom: 16 }}>
-//         {["ICY YELLOW", "ICY WHITE", "ICY BLACK"].map((category) => (
-//           <TouchableOpacity
-//             key={category}
-//             style={{
-//               flex: 1,
-//               padding: 12,
-//               backgroundColor:
-//                 form.hotelCategory === category ? "#007bff" : "#f0f0f0",
-//               alignItems: "center",
-//               borderRadius: 8,
-//               marginHorizontal: 4,
-//             }}
-//             onPress={() => handleInputChange("hotelCategory", category)}
-//           >
-//             <Text
-//               style={{
-//                 color: form.hotelCategory === category ? "#fff" : "#000",
-//               }}
-//             >
-//               {category}
-//             </Text>
-//           </TouchableOpacity>
-//         ))}
-//       </View>
-
-//       {["alpha", "beta", "gamma"].map((type) => (
-//         <View key={type} style={{ flexDirection: "row", marginBottom: 12 }}>
-//           <TextInput
-//             placeholder={`${type.charAt(0).toUpperCase() + type.slice(1)} Rooms`}
-//             style={{ ...styles.input, flex: 1, marginRight: 8 }}
-//             value={form[`${type}Rooms` as keyof FormState]}
-//             keyboardType="numeric"
-//             onChangeText={(value) =>
-//               handleInputChange(`${type}Rooms` as keyof FormState, value)
-//             }
-//           />
-//           <TextInput
-//             placeholder={`${type.charAt(0).toUpperCase() + type.slice(1)} Price`}
-//             style={{ ...styles.input, flex: 1 }}
-//             value={form[`${type}Price` as keyof FormState]}
-//             keyboardType="numeric"
-//             onChangeText={(value) =>
-//               handleInputChange(`${type}Price` as keyof FormState, value)
-//             }
-//           />
-//         </View>
-//       ))}
-
-//       <TouchableOpacity
-//         style={{ ...styles.button, marginBottom: 16 }}
-//         onPress={handleImageUpload}
-//       >
-//         <Text style={{ color: "#fff" }}>Upload Images</Text>
-//       </TouchableOpacity>
-
-//       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-//         <Text style={{ color: "#fff", fontWeight: "bold" }}>Create Hotel</Text>
-//       </TouchableOpacity>
-//     </ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   input: {
-//     borderWidth: 1,
-//     padding: 8,
-//     borderRadius: 8,
-//     marginBottom: 12,
-//   },
-//   button: {
-//     backgroundColor: "#007bff",
-//     padding: 12,
-//     borderRadius: 8,
-//     alignItems: "center",
-//   },
-//   submitButton: {
-//     backgroundColor: "#28a745",
-//     padding: 12,
-//     borderRadius: 8,
-//     alignItems: "center",
-//   },
-// });
-
-// export default History;

@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useDispatch } from 'react-redux';
@@ -19,18 +19,19 @@ export default function TabLayout() {
  
 
    const fetchHotelsSearch = async () => {
-      dispatch(setSearchLoader(true));
+      // dispatch(setSearchLoader(true));
+      console.log("explore fteching")
       try {
-        const res = await axios.get(`${baseUrl}/hotels/hotels-by-city`, {
-          params: { qs: "Agra" },
+        const res = await axios.get(`${baseUrl}/hotels/all-hotels`, {
+          params: { query: "" },
         });
         if (res.status === 200) {
           dispatch(setHotels(res.data));
-
+          dispatch(setSearchLoader(false));
         }
       } catch (error) {
         dispatch(setHotels([]));
-
+        dispatch(setSearchLoader(false));
         console.error("Error fetching hotels without:", error);
       } finally {
         dispatch(setSearchLoader(false));
@@ -63,13 +64,15 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveTintColor: '#bdbdbd',
         headerShown: false,
-        tabBarBackground: TabBarBackground,
+        // tabBarBackground: 'transparent',
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
-          default: {},
+          default: {
+             backgroundColor:"#fff"
+          },
         }),
       }}
     >

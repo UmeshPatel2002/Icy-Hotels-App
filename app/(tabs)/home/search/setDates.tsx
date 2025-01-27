@@ -4,6 +4,8 @@ import { Calendar } from 'react-native-calendars';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { setCheckInDate, setCheckOutDate } from '@/redux/reducers/hotelSlice';
 
 const formatDate = (date: string): string => {
     const options: Intl.DateTimeFormatOptions = { weekday: 'short', day: '2-digit', month: 'short' };
@@ -11,18 +13,20 @@ const formatDate = (date: string): string => {
 };
 
 const HotelBookingScreen: React.FC = () => {
-    const [checkInDate, setCheckInDate] = useState<string | null>(null);
-    const [checkOutDate, setCheckOutDate] = useState<string | null>(null);
+    const [checkInDate, setCheckInDateLocal] = useState<string | null>(null);
+    const [checkOutDate, setCheckOutDateLocal] = useState<string | null>(null);
     const [selectedType, setSelectedType] = useState<'checkIn' | 'checkOut'>('checkIn');
     const [markedDates, setMarkedDates] = useState<any>({});
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const dispatch=useDispatch();
 
     useEffect(() => {
         const today = new Date();
         const todayString = today.toISOString().split('T')[0];
 
-        setCheckInDate(todayString);
+        setCheckInDateLocal(todayString);
+        dispatch(setCheckInDate(todayString));
         // setCheckOutDate(todayString);
         setMarkedDates({
             [todayString]: {
@@ -46,7 +50,8 @@ const HotelBookingScreen: React.FC = () => {
                 setError('Check-in date must be before or equal to the check-out date.');
                 return;
             }
-            setCheckInDate(selectedDate);
+            setCheckInDateLocal(selectedDate);
+            dispatch(setCheckInDate(selectedDate))
             setError(null);
 
             const updatedMarkedDates: any = {
@@ -71,7 +76,9 @@ const HotelBookingScreen: React.FC = () => {
                 setError('Check-out date must be after or equal to the check-in date.');
                 return;
             }
-            setCheckOutDate(selectedDate);
+            setCheckOutDateLocal(selectedDate);
+            dispatch(setCheckOutDate(selectedDate))
+
             setError(null);
 
             const updatedMarkedDates:any = {

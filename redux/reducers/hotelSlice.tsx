@@ -10,6 +10,7 @@ const hotelSlice = createSlice({
     searchLoader:false,
     checkInDate:"",
     checkOutDate:"",
+    rooms:1
      
     
   },
@@ -37,11 +38,14 @@ const hotelSlice = createSlice({
       setCheckOutDate: (state, action) => {
         state.checkOutDate= action.payload;
       },
+      setRooms: (state, action) => {
+        state.rooms= action.payload;
+      }
 
    
   },
 });
 
-export const { setSearchLocation ,setSearchedHotels,setSelectedHotel,setHotels,setSearchLoader,setCheckInDate,setCheckOutDate} = hotelSlice.actions;
+export const { setSearchLocation ,setSearchedHotels,setSelectedHotel,setHotels,setSearchLoader,setCheckInDate,setCheckOutDate,setRooms} = hotelSlice.actions;
 
 export default hotelSlice.reducer;

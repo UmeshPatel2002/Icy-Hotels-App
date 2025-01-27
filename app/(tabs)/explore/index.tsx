@@ -19,7 +19,7 @@ import {
   BackHandler,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-
+import FastImage from "react-native-fast-image"
 
 
 // const categories = [
@@ -31,35 +31,37 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ExploreScreen = () => {
 
-const dispatch=useDispatch();
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const segments = useSegments();
-  const router=useRouter();
- const {city}=useLocalSearchParams();
-  console.log(city)
+  const router = useRouter();
+  const { city } = useLocalSearchParams();
+  // console.log(city)
   const hasFetched = useRef(false);
-const hotels=useSelector((state:any)=>state.hotel.hotels)
-const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
-
+  const hotels = useSelector((state: any) => state.hotel.hotels)
+  const searchLoader = useSelector((state: any) => state.hotel.searchLoader)
+  const [query, setQuery] = useState("");
+  // console.log("loader", searchLoader, city)
   useEffect(() => {
-  if(city){
-    fetchHotels();
-  }
+    if (city) {
+      setQuery(city);
+      fetchHotels();
+    }
 
   }, [city]);
-  
+
 
 
   const fetchHotels = async () => {
     setLoading(true);
-    const selectedCity = city ;
+    const selectedCity = city;
     try {
-      const res = await axios.get(`${baseUrl}/hotels/hotels-by-city`, {
-        params: { qs: selectedCity },
+      const res = await axios.get(`${baseUrl}/hotels/all-hotels`, {
+        params: { query: selectedCity },
       });
       if (res.status === 200) {
-      dispatch(setHotels(res.data));
-      setLoading(false);
+        dispatch(setHotels(res.data));
+        setLoading(false);
 
       }
     } catch (error) {
@@ -72,26 +74,49 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
     }
   };
 
- 
+
+  const fetchHotelsSearch = async () => {
+    // dispatch(setSearchLoader(true));
+    setLoading(true);
+
+    console.log("explore fteching")
+    try {
+      const res = await axios.get(`${baseUrl}/hotels/all-hotels`, {
+        params: { query: query },
+      });
+      if (res.status === 200) {
+        dispatch(setHotels(res.data));
+        setLoading(false);
+
+
+      }
+    } catch (error) {
+      dispatch(setHotels([]));
+      setLoading(false);
+
+      console.error("Error fetching hotels without:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   // Render individual hotel cards with added details such as room type, category, and ratings
-  const renderHotelCard = ({ item }:any) => {
-    const { hotelId, price, roomType, _id } = item;
-    const { name,hotelAddress, hotelCity, hotelState, images, ratings,category } = hotelId;
-    const rating = ratings.totalRating || 0;
-    const totalUsers = ratings.totalUsers || 0;
+  const renderHotelCard = ({ item }: any) => {
+
 
     return (
       <TouchableOpacity
-      onPress={()=>{
-        dispatch(setSelectedHotel(item));
-        router.push("/(tabs)/explore/booking/hotelDescription")
-    }}
+        onPress={() => {
+          dispatch(setSelectedHotel(item));
+          router.push("/(tabs)/explore/booking/hotelDescription")
+        }}
         style={{
           backgroundColor: "#fff",
           borderRadius: 12,
           marginBottom: 16,
-        
+
           overflow: "hidden",
           shadowColor: "#bdbdbd",
           shadowOpacity: 0.1,
@@ -99,23 +124,24 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
           shadowRadius: 6,
           elevation: 6,
           flexDirection: "row",
-          marginHorizontal:16,
-          justifyContent:"center",
+          marginHorizontal: 16,
+          justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Image
-          source={{ uri: images[0] }}
+        <FastImage
+          source={{ uri: item?.hotelId?.images[0] }}
           style={{
             width: 130,
-            height:"100%",
+            height: "100%",
             borderRadius: 12,
             marginRight: 12,
-            borderWidth: 2,
-            borderColor: "#ff8c00",
-           
+            borderWidth: 1,
+            borderColor: "#727070",
           }}
+          resizeMode={FastImage.resizeMode.cover} // Correct usage of resizeMode
         />
+
         <View style={{ padding: 16, flex: 1 }}>
           <Text
             style={{
@@ -125,26 +151,26 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
               color: "#333",
             }}
           >
-            {name}
+            {item?.hotelId?.name}
           </Text>
           <Text style={{ fontSize: 12, color: "#777", marginBottom: 6 }}>
-           {hotelAddress}, {hotelCity}
+            {item?.hotelId?.hotelAddress}, {item?.hotelId?.hotelCity}
           </Text>
 
           {/* Rating Display */}
           <View style={{ flexDirection: "row", marginBottom: 4 }}>
-            
-              <Text
-                
-                style={{
-                  color: "#ff8c00",
-                  fontSize: 12,
-                }}
-              >
-                ★ {rating}
-              </Text>
-         
-           
+
+            <Text
+
+              style={{
+                color: "#ff8c00",
+                fontSize: 12,
+              }}
+            >
+              ★ {item?.hotelId?.ratings?.totalRating}
+            </Text>
+
+
           </View>
 
           {/* Room Type & Category */}
@@ -156,7 +182,7 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
               marginBottom: 4,
             }}
           >
-            Room Type: <Text style={{ fontWeight: "bold" }}>{roomType}</Text>
+            Room Type: <Text style={{ fontWeight: "bold" }}>{item?.roomType}</Text>
           </Text>
           <Text
             style={{
@@ -166,7 +192,7 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
               marginBottom: 4,
             }}
           >
-            Category: <Text style={{ fontWeight: "bold" }}>{category}</Text>
+            Category: <Text style={{ fontWeight: "bold" }}>{item?.hotelId?.category}</Text>
           </Text>
 
           {/* Price */}
@@ -178,7 +204,7 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
               marginTop: 8,
             }}
           >
-            ₹{price}/night
+            ₹{item?.price}/night
           </Text>
         </View>
       </TouchableOpacity>
@@ -200,7 +226,7 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
             Explore Hotels
           </Text>
           <Text style={{ fontSize: 16, color: "#555" }}>
-            {city ? `Showing results for ${city}` : "All Hotels"}
+            {query ? `Showing results for ${query}`  : "All Hotels"}
           </Text>
         </View>
 
@@ -224,9 +250,13 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
         >
           <Text style={{ fontSize: 16, color: "#555", marginRight: 10 }}>🔍</Text>
           <TextInput
-            placeholder="Search hotels, cities, or categories"
+            placeholder="Search hotels..."
             style={{ fontSize: 16, color: "#555", flex: 1 }}
+            onChangeText={(val) => setQuery(val)} // Use onChangeText instead of onChange
+            value={query}
+            onSubmitEditing={fetchHotelsSearch}
           />
+
         </View>
 
         {/* Categories */}
@@ -267,12 +297,12 @@ const searchLoader =useSelector((state:any)=>state.hotel.searchLoader)
 
         {/* Hotels */}
         <View style={{
-         
+
         }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginVertical: 20 , paddingHorizontal: 16}}>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginVertical: 20, paddingHorizontal: 16 }}>
             Hotels
           </Text>
-          {loading || searchLoader ? (
+          {(loading || searchLoader) ? (
             <ActivityIndicator size="large" color="#ff8c00" />
           ) : hotels?.length > 0 ? (
             <FlatList

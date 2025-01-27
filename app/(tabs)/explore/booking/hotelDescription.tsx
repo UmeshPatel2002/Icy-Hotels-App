@@ -17,12 +17,12 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import { baseUrl } from "@/constants/server";
 import { formatDateRange } from "@/logics/logics";
+import FastImage from "react-native-fast-image";
 
-const { width } = Dimensions.get("window");
 
 const HotelDescriptionScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const hotel = useSelector((state: any) => state.hotel.selectedHotel);
+  const hotel = useSelector((state: any) => state?.hotel.selectedHotel);
   const router = useRouter();
   const imageHeight = 350;
 
@@ -38,7 +38,21 @@ const HotelDescriptionScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const checkInDate=useSelector((state:any)=>state.hotel.checkInDate)
   const checkOutDate=useSelector((state:any)=>state.hotel.checkOutDate)
-console.log(checkInDate, checkOutDate)
+  const user=useSelector((state:any)=>state.user.userDetails)
+console.log("explore desc",checkInDate, checkOutDate,user,hotel?._id)
+const [isVisible, setIsVisible] = useState(false);
+const [modalMessage, setModalMessage] = useState("");
+const [isSuccess, setIsSuccess] = useState(false);
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+        const handlePress = () => {
+          if (!user?._id) {
+            setShowLoginModal(true); // Open modal
+          } else {
+            handleCheckAvailability(); // Proceed to book
+          }
+        };
 
 
   const updateRooms = (newRooms: number) => {
@@ -82,28 +96,28 @@ console.log(checkInDate, checkOutDate)
   const handleCheckAvailability = async () => {
     
     console.log(hotel, checkInDate,checkOutDate)
-    if(!hotel.hotelId?._id || !checkInDate || !checkOutDate || !rooms){
+    if(!hotel?.hotelId?._id || !checkInDate || !checkOutDate || !rooms){
         alert("Please fill all fields")
         return;
     }
     setLoading(true);
     try {
         
-      const res = await axios.get(`${baseUrl}/hotel/confirm-availability`, {
+      const res = await axios.get(`${baseUrl}/hotels/confirm-availability`, {
         params: {
           hotelId: hotel?.hotelId?._id, // Pass the correct hotel ID dynamically
-          startDate: new Date(checkInDate).toISOString(), // Ensure proper date formatting
-          endDate: new Date(checkOutDate).toISOString(), // Ensure proper date formatting
-          roomsReq: rooms, // Correct parameter name for "roomsReq"
+          startDate: checkInDate, // Ensure proper date formatting
+          endDate:checkOutDate, // Ensure proper date formatting
+          roomsReq: rooms, 
         },
       });
-  
+         console.log(res.data)
       if (res.status === 200 && res.data) {
         console.log(res.data)
-        setIsAvailable(true); // Set availability state
-        setShowModal(true); // Show modal
+        setIsAvailable(true); 
+        setShowModal(true); 
       } else {
-        setIsAvailable(false); // Rooms not available
+        setIsAvailable(false); 
         setShowModal(true);
       }
     } catch (error) {
@@ -115,6 +129,48 @@ console.log(checkInDate, checkOutDate)
     }
   };
   
+  const confirmBooking = async () => {
+    console.log("confirming booking", rooms,user?._id,hotel?._id, rooms * hotel?.price);
+    try {
+      const res = await axios.post(`${baseUrl}/booking/book-room`, {
+        user: user?._id,
+        room: hotel?._id,
+        checkInDate: checkInDate,
+        checkOutDate: checkOutDate,
+        totalRooms: rooms,
+        status: "Confirmed",
+        paymentStatus: "Paid",
+        transactionId: "xyz",
+        totalPrice: rooms * hotel?.price,
+      });
+
+      if (res.data) {
+        console.log(res.data);
+        setIsSuccess(true);
+        setModalMessage("Booking Successful!");
+        closeModal();
+        showPopup();
+      } else {
+        setIsSuccess(false);
+        setModalMessage("Error booking hotel.");
+        closeModal();
+        showPopup();
+      }
+    } catch (error) {
+      console.error("Error booking hotel:", error);
+      setIsSuccess(false);
+      closeModal();
+      setModalMessage("Error booking hotel.");
+      showPopup();
+    }
+  }
+
+  const showPopup = () => {
+    setIsVisible(true);
+    setTimeout(() => {
+      setIsVisible(false);
+    }, 5000); // Hide the modal after 5 seconds
+  };
 
   const closeModal = () => {
     setShowModal(false);
@@ -156,16 +212,17 @@ console.log(checkInDate, checkOutDate)
             }}
           >
             <ScrollView horizontal pagingEnabled>
-              {hotel?.hotelId?.images?.map((img, index) => (
-                <Image
+              {hotel?.hotelId?.images && hotel?.hotelId?.images?.map((img, index) => (
+                <FastImage
                   key={index}
                   source={{ uri: img }}
                   style={{
                     width,
                     height: imageHeight,
-                    resizeMode: "cover",
                     borderRadius: 15,
                   }}
+               resizeMode={FastImage.resizeMode.cover} // Correct usage of resizeMode
+
                 />
               ))}
             </ScrollView>
@@ -276,8 +333,7 @@ console.log(checkInDate, checkOutDate)
                   marginLeft: 8,
                 }}
               >
-                {hotel?.hotelId?.hotelAddress}, {hotel?.hotelId?.hotelCity},{" "}
-                {hotel?.hotelId?.hotelState}
+                {hotel?.hotelId?.hotelAddress}
               </Text>
             </View>
 
@@ -340,7 +396,7 @@ console.log(checkInDate, checkOutDate)
                 Amenities:
               </Text>
               <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                {hotel?.hotelId?.hotelAmenities?.map((amenity, index) => (
+                {hotel?.hotelId?.hotelAmenities && hotel?.hotelId?.hotelAmenities?.map((amenity, index) => (
                   <View
                     key={index}
                     style={{
@@ -386,17 +442,17 @@ console.log(checkInDate, checkOutDate)
                 Ratings & Reviews:
               </Text>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                {renderStars(hotel?.hotelId?.ratings?.totalRating)}
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "#777",
-                    marginLeft: 8,
-                  }}
-                >
-                  ({hotel?.hotelId?.ratings?.totalUsers} reviews)
-                </Text>
-              </View>
+  {renderStars(hotel?.hotelId?.ratings?.totalRating || 0)}
+  <Text
+    style={{
+      fontSize: 16,
+      color: "#777",
+      marginLeft: 8,
+    }}
+  >
+    ({hotel?.hotelId?.ratings?.totalUsers || 0} reviews)
+  </Text>
+</View>
             </View>
 
             <View
@@ -538,7 +594,7 @@ console.log(checkInDate, checkOutDate)
             shadowRadius: 8,
             marginTop:10
         }}
-        onPress={handleCheckAvailability}
+        onPress={()=>{handlePress()}}
         disabled={loading}
       >
         {loading ? (
@@ -564,7 +620,12 @@ console.log(checkInDate, checkOutDate)
     
 
       {/* Modal for showing availability */}
-      <Modal
+      
+    </View>
+         
+        </Animated.ScrollView>
+      )}
+<Modal
         visible={showModal}
         transparent
         animationType="slide"
@@ -621,7 +682,7 @@ console.log(checkInDate, checkOutDate)
                   marginTop: 10,
                 }}
                 onPress={() => {
-                  closeModal();
+                  confirmBooking()
                   console.log("Room booking confirmed!");
                 }}
               >
@@ -654,11 +715,6 @@ console.log(checkInDate, checkOutDate)
           </View>
         </View>
       </Modal>
-    </View>
-         
-        </Animated.ScrollView>
-      )}
-
     
 
       <Modal
@@ -728,6 +784,145 @@ console.log(checkInDate, checkOutDate)
           </View>
         </View>
       </Modal>
+      <Modal visible={isVisible} transparent animationType="slide">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              padding: 20,
+              borderRadius: 10,
+              width: "80%",
+              alignItems: "center",
+              backgroundColor: isSuccess ? "#d4edda" : "#f8d7da",
+              borderColor: isSuccess ? "#c3e6cb" : "#f5c6cb",
+              borderWidth: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                textAlign: "center",
+                color: isSuccess ? "#155724" : "#721c24",
+              }}
+            >
+              {modalMessage}
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
+      
+                  <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showLoginModal}
+            onRequestClose={() => setShowLoginModal(false)}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
+              <View
+                style={{
+                  width: width * 0.8,
+                  backgroundColor: "#fff",
+                  borderRadius: 20,
+                  padding: 20,
+                  elevation: 5,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 8,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: "#333",
+                    marginBottom: 15,
+                  }}
+                >
+                  Please Sign Up or Log In
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: "#555",
+                    textAlign: "center",
+                    marginBottom: 20,
+                  }}
+                >
+                  You need an account to book a room.
+                </Text>
+      
+                {/* Action Buttons */}
+                <View
+                  style={{
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    width: "70%",
+                    gap:20
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                  
+                      paddingVertical: 12,
+                      borderRadius: 30,
+                      marginHorizontal: 10,
+                      backgroundColor: "#ffb000",
+                      alignItems: "center",
+                    }}
+                    onPress={()=>{router.push("/(tabs)/profile/login")}}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#fff",
+                      }}
+                    >
+                      Login / SignUp
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      
+                      paddingVertical: 12,
+                      borderRadius: 30,
+                      marginHorizontal: 10,
+                      backgroundColor: "#ccc",
+                      alignItems: "center",
+                    }}
+                    onPress={() => setShowLoginModal(false)}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#fff",
+                      }}
+                    >
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
     </View>
   );
 };

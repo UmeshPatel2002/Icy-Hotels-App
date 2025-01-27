@@ -23,158 +23,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 const { width } = Dimensions.get("window");
 
-// const hotels = [
-//   {
-//     id: "1",
-//     name: "Hotel Sunshine",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Free Wi-Fi", "Parking", "Breakfast"],
-//     description: "A cozy place to stay with modern amenities.",
-//     location: "New Delhi, India",
-//     distance: "2 km from city center",
-//     rating: 4.5,
-//     pricePerNight: "₹2500",
-//   },
-//   {
-//     id: "2",
-//     name: "Hotel Paradise",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Pool", "Gym", "Spa"],
-//     description: "Luxury and comfort at affordable prices.",
-//     location: "Mumbai, India",
-//     distance: "5 km from airport",
-//     rating: 4.8,
-//     pricePerNight: "₹4500",
-//   },
-//   {
-//     id: "3",
-//     name: "Sea Breeze Resort",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Beach Access", "Bar", "Pet-Friendly"],
-//     description: "Perfect for a seaside getaway.",
-//     location: "Goa, India",
-//     distance: "1 km from beach",
-//     rating: 4.2,
-//     pricePerNight: "₹3000",
-//   },
-//   {
-//     id: "4",
-//     name: "Mountain View Inn",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Mountain Views", "Hiking Trails", "Fireplace"],
-//     description: "Stay amidst breathtaking mountain views.",
-//     location: "Manali, India",
-//     distance: "3 km from Mall Road",
-//     rating: 4.6,
-//     pricePerNight: "₹4000",
-//   },
-//   {
-//     id: "5",
-//     name: "Urban Stay",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Free Wi-Fi", "City Tours", "24/7 Service"],
-//     description: "Modern amenities in the heart of the city.",
-//     location: "Bangalore, India",
-//     distance: "1 km from MG Road",
-//     rating: 4.3,
-//     pricePerNight: "₹3500",
-//   },
-//   {
-//     id: "6",
-//     name: "Royal Heritage Palace",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Heritage Property", "Spa", "Cultural Shows"],
-//     description: "Experience luxury in a heritage setting.",
-//     location: "Jaipur, India",
-//     distance: "4 km from Amber Fort",
-//     rating: 4.9,
-//     pricePerNight: "₹6000",
-//   },
-//   {
-//     id: "7",
-//     name: "Desert Dunes Camp",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Camel Rides", "Bonfire", "Cultural Nights"],
-//     description: "A unique stay in the heart of the desert.",
-//     location: "Jaisalmer, India",
-//     distance: "10 km from Jaisalmer Fort",
-//     rating: 4.7,
-//     pricePerNight: "₹5000",
-//   },
-//   {
-//     id: "8",
-//     name: "Hilltop Paradise",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Infinity Pool", "Yoga Classes", "Organic Meals"],
-//     description: "Relax and rejuvenate in the hills.",
-//     location: "Ooty, India",
-//     distance: "5 km from Rose Garden",
-//     rating: 4.4,
-//     pricePerNight: "₹4000",
-//   },
-//   {
-//     id: "9",
-//     name: "Cityscape Hotel",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Rooftop Dining", "Business Center", "Free Parking"],
-//     description: "Ideal for business and leisure travelers.",
-//     location: "Pune, India",
-//     distance: "3 km from Shivaji Nagar",
-//     rating: 4.3,
-//     pricePerNight: "₹3000",
-//   },
-//   {
-//     id: "10",
-//     name: "Tranquil Grove Retreat",
-//     images: [
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//       "https://via.placeholder.com/300",
-//     ],
-//     amenities: ["Forest Views", "Private Cottages", "Barbecue"],
-//     description: "Escape to a serene retreat in nature.",
-//     location: "Wayanad, India",
-//     distance: "8 km from Edakkal Caves",
-//     rating: 4.5,
-//     pricePerNight: "₹3200",
-//   },
-// ];
 
 const HotelCard = ({ hotel, setModalVisible }: any) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -466,6 +314,7 @@ export default function Hotels() {
       const res = await axios.get(`${baseUrl}/hotels/hotels-by-city`, {
         params: {
           qs: location,
+
         },
       });
 
@@ -485,172 +334,173 @@ export default function Hotels() {
   }, [location]);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "#f7f7f7",
-        paddingHorizontal: 10,
-      }}
-    >
-      {/* Loader */}
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <ActivityIndicator size="large" color="#ffb000" />
-          <Text style={{ marginTop: 10, fontSize: 16, color: "#777" }}>
-            Loading Hotels...
-          </Text>
-        </View>
-      ) : (
-        // Hotel Cards List
-        <View
-          style={{
-             marginTop:10,
+    <></>
+    // <SafeAreaView
+    //   style={{
+    //     flex: 1,
+    //     backgroundColor: "#f7f7f7",
+    //     paddingHorizontal: 10,
+    //   }}
+    // >
+    //   {/* Loader */}
+    //   {loading ? (
+    //     <View
+    //       style={{
+    //         flex: 1,
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //         height: "100%",
+    //       }}
+    //     >
+    //       <ActivityIndicator size="large" color="#ffb000" />
+    //       <Text style={{ marginTop: 10, fontSize: 16, color: "#777" }}>
+    //         Loading Hotels...
+    //       </Text>
+    //     </View>
+    //   ) : (
+    //     // Hotel Cards List
+    //     <View
+    //       style={{
+    //          marginTop:10,
 
-          }}
-        >
-          <Text style={{ fontSize: 20, fontFamily:poppins-black, marginBottom: 15,paddingHorizontal:5 }}>
-           Available Hotels 
-          </Text>
+    //       }}
+    //     >
+    //       <Text style={{ fontSize: 20, fontFamily:poppins-black, marginBottom: 15,paddingHorizontal:5 }}>
+    //        Available Hotels 
+    //       </Text>
         
-        <FlatList
-          data={hotels}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                marginBottom: 20, // Space between hotel cards
-                borderRadius: 15,
-                overflow: "hidden",
-                backgroundColor: "#fff",
-              }}
-            >
-              <HotelCard
-                key={item._id}
-                hotel={item}
-                setModalVisible={setModalVisible}
-              />
-            </View>
-          )}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <Text style={{ textAlign: "center", marginTop: 20 }}>
-              No hotels available
-            </Text>
-          }
-        />
-        </View>
-      )}
+    //     <FlatList
+    //       data={hotels}
+    //       keyExtractor={(item) => item._id}
+    //       renderItem={({ item }) => (
+    //         <View
+    //           style={{
+    //             marginBottom: 20, // Space between hotel cards
+    //             borderRadius: 15,
+    //             overflow: "hidden",
+    //             backgroundColor: "#fff",
+    //           }}
+    //         >
+    //           <HotelCard
+    //             key={item._id}
+    //             hotel={item}
+    //             setModalVisible={setModalVisible}
+    //           />
+    //         </View>
+    //       )}
+    //       showsVerticalScrollIndicator={false}
+    //       ListEmptyComponent={
+    //         <Text style={{ textAlign: "center", marginTop: 20 }}>
+    //           No hotels available
+    //         </Text>
+    //       }
+    //     />
+    //     </View>
+    //   )}
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-          }}
-        >
-          <View
-            style={{
-              width: width * 0.8,
-              backgroundColor: "#fff",
-              borderRadius: 20,
-              padding: 20,
-              elevation: 5,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 8,
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#333",
-                marginBottom: 15,
-              }}
-            >
-              Confirm Booking
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: "#555",
-                textAlign: "center",
-                marginBottom: 20,
-              }}
-            >
-              Are you sure you want to book this room?
-            </Text>
+    //   <Modal
+    //     animationType="slide"
+    //     transparent={true}
+    //     visible={modalVisible}
+    //     onRequestClose={closeModal}
+    //   >
+    //     <View
+    //       style={{
+    //         flex: 1,
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //         backgroundColor: "rgba(0, 0, 0, 0.6)",
+    //       }}
+    //     >
+    //       <View
+    //         style={{
+    //           width: width * 0.8,
+    //           backgroundColor: "#fff",
+    //           borderRadius: 20,
+    //           padding: 20,
+    //           elevation: 5,
+    //           shadowColor: "#000",
+    //           shadowOffset: { width: 0, height: 4 },
+    //           shadowOpacity: 0.25,
+    //           shadowRadius: 8,
+    //           alignItems: "center",
+    //         }}
+    //       >
+    //         <Text
+    //           style={{
+    //             fontSize: 20,
+    //             fontWeight: "bold",
+    //             color: "#333",
+    //             marginBottom: 15,
+    //           }}
+    //         >
+    //           Confirm Booking
+    //         </Text>
+    //         <Text
+    //           style={{
+    //             fontSize: 16,
+    //             color: "#555",
+    //             textAlign: "center",
+    //             marginBottom: 20,
+    //           }}
+    //         >
+    //           Are you sure you want to book this room?
+    //         </Text>
 
-            {/* Action Buttons */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  paddingVertical: 12,
-                  borderRadius: 30,
-                  marginHorizontal: 10,
-                  backgroundColor: "#ffb000",
-                  alignItems: "center",
-                }}
-                onPress={confirmBooking}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#fff",
-                  }}
-                >
-                  Yes, Confirm
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  paddingVertical: 12,
-                  borderRadius: 30,
-                  marginHorizontal: 10,
-                  backgroundColor: "#ccc",
-                  alignItems: "center",
-                }}
-                onPress={closeModal}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#fff",
-                  }}
-                >
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+    //         {/* Action Buttons */}
+    //         <View
+    //           style={{
+    //             flexDirection: "row",
+    //             justifyContent: "space-between",
+    //             width: "100%",
+    //           }}
+    //         >
+    //           <TouchableOpacity
+    //             style={{
+    //               flex: 1,
+    //               paddingVertical: 12,
+    //               borderRadius: 30,
+    //               marginHorizontal: 10,
+    //               backgroundColor: "#ffb000",
+    //               alignItems: "center",
+    //             }}
+    //             onPress={confirmBooking}
+    //           >
+    //             <Text
+    //               style={{
+    //                 fontSize: 16,
+    //                 fontWeight: "bold",
+    //                 color: "#fff",
+    //               }}
+    //             >
+    //               Yes, Confirm
+    //             </Text>
+    //           </TouchableOpacity>
+    //           <TouchableOpacity
+    //             style={{
+    //               flex: 1,
+    //               paddingVertical: 12,
+    //               borderRadius: 30,
+    //               marginHorizontal: 10,
+    //               backgroundColor: "#ccc",
+    //               alignItems: "center",
+    //             }}
+    //             onPress={closeModal}
+    //           >
+    //             <Text
+    //               style={{
+    //                 fontSize: 16,
+    //                 fontWeight: "bold",
+    //                 color: "#fff",
+    //               }}
+    //             >
+    //               Cancel
+    //             </Text>
+    //           </TouchableOpacity>
+    //         </View>
+    //       </View>
+    //     </View>
+    //   </Modal>
+    // </SafeAreaView>
   );
 }

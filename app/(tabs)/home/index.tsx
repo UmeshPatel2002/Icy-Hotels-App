@@ -4,8 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, Dimensions, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from '@expo/vector-icons/Entypo';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUserDetails } from '@/redux/reducers/userSlice';
+import { formatDateRange } from '@/logics/logics';
+import { setRooms } from '@/redux/reducers/hotelSlice';
 
 
 const HomeScreen = () => {
@@ -14,11 +18,19 @@ const HomeScreen = () => {
   const [roomsGuests, setRoomsGuests] = useState('');
   const [datesModal, setDatesModal] = useState(false);
   const [guests, setGuests] = useState<number>(1);
-  const [rooms, setRooms] = useState<number>(1);
+  const [rooms, setRoomsLocal] = useState<number>(1);
   const { width, height } = Dimensions.get('window');
   const location=useSelector((state:any)=>state.hotel.searchLocation)
+  const user=useSelector((state:any)=>state.user.userDetails)
+  const dispatch=useDispatch();
+    const checkInDate=useSelector((state:any)=>state.hotel.checkInDate)
+    const checkOutDate=useSelector((state:any)=>state.hotel.checkOutDate)
+    const room = useSelector((state:any) => state.hotel.rooms );
+
+
+  // console.log(checkInDate, checkOutDate,room)
 const router=useRouter()
-  const segments = useSegments(); // Get the current route segments
+  const segments = useSegments(); 
   console.log(segments)
 
   useEffect(() => {
@@ -45,12 +57,16 @@ const router=useRouter()
   const updateRooms = (newRooms: number) => {
     console.log('newRooms', newRooms);
     if (newRooms < rooms && guests > newRooms * 2) return;
-    setRooms(newRooms);
+    setRoomsLocal(newRooms);
+    dispatch(setRooms(newRooms));
+
   };
   const updateGuests = (newGuestCount: number) => {
     const calculatedRooms = Math.ceil(newGuestCount / 2); // 2 guests per room
-    setRooms(Math.max(rooms, calculatedRooms));
+    setRoomsLocal(Math.max(rooms, calculatedRooms));
+    
     setGuests(newGuestCount);
+    dispatch(setRooms(Math.max(rooms, calculatedRooms)));
   }
   // Show modal on button click
 
@@ -86,6 +102,27 @@ const router=useRouter()
     });
   }
 
+  useEffect(() => {
+    dispatch(setRooms(1));
+    fetchUserData();
+  }, [user?._id]);
+
+  const fetchUserData = async () => {
+    try {
+      // await AsyncStorage.removeItem("userDetails");
+      // dispatch(setUserDetails(null));
+      const userData = await AsyncStorage.getItem("userDetails");
+      console.log("fetching user data");
+      if (userData) {
+        const parsedUserData = JSON.parse(userData);
+        dispatch(setUserDetails(parsedUserData));
+      }
+
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
       <ScrollView style={{ flex: 1 }}>
@@ -117,10 +154,10 @@ const router=useRouter()
                 Dates
               </Text>
               <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>
-                1 Jan- 2 Jan
+                {(checkInDate && checkOutDate)?formatDateRange(checkInDate,checkOutDate):"Jan 1 - Jan 2"}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setDatesModal(true); }} style={{
+            <TouchableOpacity onPress={() => { setDatesModal(true);dispatch(setRooms(1)) }} style={{
               flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, paddingHorizontal: 5, marginBottom: 10, backgroundColor: '#fff', marginLeft: 5
             }}>
               <Text style={{
