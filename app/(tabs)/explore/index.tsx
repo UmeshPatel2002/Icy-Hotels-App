@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import FastImage from "react-native-fast-image"
+import { Ionicons } from "@expo/vector-icons";
 
 
 // const categories = [
@@ -221,12 +222,9 @@ const ExploreScreen = () => {
     >
       <ScrollView style={{ flex: 1 }}>
         {/* Header */}
-        <View style={{ marginBottom: 20, padding: 16 }}>
+        <View style={{ marginBottom: 10, padding: 16 }}>
           <Text style={{ fontSize: 24, fontWeight: "bold", color: "#333" }}>
             Explore Hotels
-          </Text>
-          <Text style={{ fontSize: 16, color: "#555" }}>
-            {query ? `Showing results for ${query}`  : "All Hotels"}
           </Text>
         </View>
 
@@ -238,7 +236,7 @@ const ExploreScreen = () => {
             paddingHorizontal: 16,
             marginHorizontal: 16,
             paddingVertical: 10,
-            marginBottom: 20,
+          
             flexDirection: "row",
             alignItems: "center",
             shadowColor: "#000",
@@ -248,7 +246,6 @@ const ExploreScreen = () => {
             elevation: 3,
           }}
         >
-          <Text style={{ fontSize: 16, color: "#555", marginRight: 10 }}>🔍</Text>
           <TextInput
             placeholder="Search hotels..."
             style={{ fontSize: 16, color: "#555", flex: 1 }}
@@ -256,44 +253,21 @@ const ExploreScreen = () => {
             value={query}
             onSubmitEditing={fetchHotelsSearch}
           />
+          <TouchableOpacity
+            onPress={fetchHotelsSearch}
+            >
+              <Ionicons name="search" size={24} color="#555" />
+            </TouchableOpacity>
+
 
         </View>
-
-        {/* Categories */}
-        {/* <View>
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 12 }}>
-            Categories
+        <View style={{ marginTop:12, paddingHorizontal: 16, }}>
+          <Text style={{ fontSize: 14, color: "#ff8c00",fontFamily:"Poppins-Regular" }}>
+            {query ? `Showing results for: ${query}`  : "All Hotels"}
           </Text>
-          <FlatList
-            data={categories}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#fff",
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                  borderRadius: 25,
-                  marginRight: 10,
-                  shadowColor: "#000",
-                  shadowOpacity: 0.1,
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowRadius: 6,
-                  elevation: 3,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 16, marginRight: 6 }}>{item.icon}</Text>
-                <Text style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View> */}
+        </View>
+
+      
 
         {/* Hotels */}
         <View style={{

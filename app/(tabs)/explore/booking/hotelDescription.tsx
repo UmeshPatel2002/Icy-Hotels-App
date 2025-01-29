@@ -539,7 +539,8 @@ const [isSuccess, setIsSuccess] = useState(false);
                       paddingHorizontal: 5,
                     }}
                   >
-                    {formatDateRange(checkInDate, checkOutDate)}
+                   {(checkInDate && checkOutDate) ? formatDateRange(checkInDate, checkOutDate) : "Jan 1 - Jan 2"}
+                    
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
