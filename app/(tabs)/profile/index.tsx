@@ -128,7 +128,9 @@ const UserProfile = () => {
                   backgroundColor: "#eee",
                 }}
               />
-              <TouchableOpacity
+              {
+                user?._id && 
+                <TouchableOpacity
                 style={{
                   position: "absolute",
                   bottom: 0,
@@ -142,6 +144,8 @@ const UserProfile = () => {
               >
                 <Ionicons name="pencil" size={16} color="#fff" />
               </TouchableOpacity>
+              }
+             
             </View>
             <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
               {user?.name ? `${user?.name}` : "User"}

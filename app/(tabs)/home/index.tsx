@@ -7,10 +7,30 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setUserDetails } from '@/redux/reducers/userSlice';
+import { setLatitude, setLongitude, setUserAddress, setUserDetails } from '@/redux/reducers/userSlice';
 import { formatDateRange } from '@/logics/logics';
 import { setRooms } from '@/redux/reducers/hotelSlice';
+import * as Location from "expo-location";
 
+
+const popularCities = [
+  { name: 'Noida', image: 'https://images.unsplash.com/photo-1619542402915-dcaf30e4e2a1?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Delhi', image: 'https://images.unsplash.com/photo-1598977054780-2dc700fdc9d3?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Mumbai', image: 'https://images.unsplash.com/photo-1625731226721-b4d51ae70e20?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Bangalore', image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1854&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Gurugram', image: 'https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Jhansi', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Ghaziabad', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Chennai', image: 'https://plus.unsplash.com/premium_photo-1666805690489-59d72f05b371?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+];
+
+const nearByHotels = [
+  { name: 'Hotel 1', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { name: 'Hotel 2', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
+  { name: 'Hotel 3', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
+  { name: 'Hotel 4', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
+  { name: 'Hotel 5', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' }
+]
 
 const HomeScreen = () => {
   const [destination, setDestination] = useState('');
@@ -20,17 +40,20 @@ const HomeScreen = () => {
   const [guests, setGuests] = useState<number>(1);
   const [rooms, setRoomsLocal] = useState<number>(1);
   const { width, height } = Dimensions.get('window');
-  const location=useSelector((state:any)=>state.hotel.searchLocation)
-  const user=useSelector((state:any)=>state.user.userDetails)
-  const dispatch=useDispatch();
-    const checkInDate=useSelector((state:any)=>state.hotel.checkInDate)
-    const checkOutDate=useSelector((state:any)=>state.hotel.checkOutDate)
-    const room = useSelector((state:any) => state.hotel.rooms );
-
-
+  const location = useSelector((state: any) => state.hotel.searchLocation)
+  const user = useSelector((state: any) => state.user.userDetails)
+  const dispatch = useDispatch();
+  const checkInDate = useSelector((state: any) => state.hotel.checkInDate)
+  const checkOutDate = useSelector((state: any) => state.hotel.checkOutDate)
+  const room = useSelector((state: any) => state.hotel.rooms);
+  const [loc, setLoc] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [address, setAddress] = useState("")
+  const OPENCAGE_API_KEY = "144cab81ca2e4a5ea65feeae1b07d6e9"
   // console.log(checkInDate, checkOutDate,room)
-const router=useRouter()
-  const segments = useSegments(); 
+  const router = useRouter()
+  const segments = useSegments();
   console.log(segments)
 
   useEffect(() => {
@@ -52,6 +75,58 @@ const router=useRouter()
     return () => backHandler.remove(); // Clean up the event listener
   }, [segments, router]);
 
+  const fetchLocation = async () => {
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      // Request location permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied.");
+        return;
+      }
+      const locationOptions = {
+        accuracy: Location.Accuracy.BestForNavigation,  // Best accuracy for navigation
+        timeInterval: 5000,  // 5 seconds interval for faster updates
+        distanceInterval: 1, // Update every 1 meter moved
+      };
+      // Get current position
+      const locationData = await Location.getCurrentPositionAsync(locationOptions);
+      setLoc(locationData.coords);
+      console.log("Location: ", locationData)
+
+      // Use OpenCage API for reverse geocoding
+      const { latitude, longitude } = locationData.coords;
+      dispatch(setLatitude(latitude))
+      dispatch(setLongitude(longitude))
+      const response = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${OPENCAGE_API_KEY}`
+      );
+      console.log("Address: ", response.data?.results[0]?.formatted)
+
+      // Set the address in state
+      if (response.data.results.length > 0) {
+        const formattedAddress = response.data.results[0]?.formatted;
+
+        setAddress(formattedAddress);
+
+        dispatch(setUserAddress(formattedAddress));
+      } else {
+        setErrorMsg("Failed to fetch address.");
+      }
+    } catch (error) {
+      setErrorMsg("Error fetching location: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchLocation();
+  }, []);
+
 
   // Logic to update room count based on guest count
   const updateRooms = (newRooms: number) => {
@@ -64,41 +139,24 @@ const router=useRouter()
   const updateGuests = (newGuestCount: number) => {
     const calculatedRooms = Math.ceil(newGuestCount / 2); // 2 guests per room
     setRoomsLocal(Math.max(rooms, calculatedRooms));
-    
+
     setGuests(newGuestCount);
     dispatch(setRooms(Math.max(rooms, calculatedRooms)));
   }
   // Show modal on button click
 
+
+
  
-
-  const popularCities = [
-    { name: 'Noida', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Gurugram', image: 'https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Jhansi', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Gaziabad', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Delhi', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Mumbai', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Bangalore', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Chennai', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-  ];
-
-  const nearByHotels=[
-    { name: 'Hotel 1', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { name: 'Hotel 2', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90'},
-    { name: 'Hotel 3', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90'},
-    { name: 'Hotel 4', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90'},
-    { name: 'Hotel 5', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90'}
-  ]
   const handleSearch = () => {
     console.log('Search clicked with:', { destination, dates, roomsGuests });
   };
 
-  const handleHotelSearch=async()=>{
-    
-     router.push({
+  const handleHotelSearch = async () => {
+
+    router.push({
       pathname: "/home/search/booking",
-      params: { location:location},
+      params: { location: location },
     });
   }
 
@@ -124,27 +182,117 @@ const router=useRouter()
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView style={{ flex: 1 }}>
         {/* Navbar with Logo */}
-        <View style={{ backgroundColor: '#fff', padding: 10, alignItems: 'center', borderBottomWidth: 1, borderColor: '#ddd', elevation: 10 }}>
-          <Image
-            source={{ uri: 'https://res.cloudinary.com/kumarvivek/image/upload/v1735634569/icy_afyl3a.png' }}
-            style={{ width: 60, height: 60 }}
-          />
-        </View>
+        <View style={{
+          flex: 1,
+          padding: 10,
+          backgroundColor: '#fff',
+          paddingVertical: 20,
+          paddingHorizontal: 20,
+          borderBottomStartRadius: 15,
+          borderBottomEndRadius: 15,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.5,
+          shadowRadius: 4,
+          elevation: 10,
 
-        <Text style={{ fontSize: 20, fontFamily:"Poppins-SemiBold", marginVertical: 20, textAlign: 'center' }}>Where can we take you?</Text>
+        }}>
+          {/* Header Section with Logo and Address */}
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 0,
+          }}>
+            {/* Logo */}
+            <Image
+              source={{ uri: 'https://res.cloudinary.com/kumarvivek/image/upload/v1735634569/icy_afyl3a.png' }}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 12,
+              }}
+            />
+
+            {/* Address Section with Modern Location Icon */}
+            <View style={{
+              flex: 1,
+              marginLeft: 15,
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+            }}>
+              {/* Modern Location Icon */}
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 0,
+              }}>
+                <Ionicons name="location-outline" size={16} color="#ffb000" />
+                <Text style={{
+                  fontSize: 12,
+                  fontFamily: 'Poppins-Medium',
+                  color: '#ffb000',
+                  marginLeft: 5,
+                }}>
+                  Location
+                </Text>
+              </View>
+              {/* Display Address */}
+              {address ? (
+                <Text style={{
+                  fontSize: 10,
+                  fontFamily: 'Poppins-Light',
+                  color: '#333',
+                  textAlign: 'right',
+                  maxWidth: '60%',
+                  paddingRight: 5,
+                  // fontWeight: 'bold',
+                  letterSpacing: 1,
+                }}>
+                  {address?.substring(0, 35)}...
+                </Text>
+              ) : (
+                <Text style={{
+                  fontSize: 10,
+                  fontFamily: 'Poppins-Light',
+                  color: '#333',
+                  textAlign: 'right',
+                  paddingRight: 5,
+                }}>
+                  Fetching address...
+                </Text>
+              )}
+            </View>
+          </View>
+
+          {/* Title Section */}
+
+        </View>
+        <Text style={{
+          fontSize: 22,
+          fontFamily: 'Poppins-Bold',
+          marginVertical: 20,
+          textAlign: 'center',
+          color: '#3E4A59',
+          fontWeight: 'bold',
+        }}>
+          Where can we take you?
+        </Text>
 
         {/* Search Form */}
-        <View style={{ padding: 15, backgroundColor: '#fff', borderRadius: 10, marginHorizontal: 15, shadowColor: '#bdbdbd', shadowOpacity: 0.25, shadowRadius: 10, elevation: 8,shadowOffset:{
-            width:0,
-            height:2
-        } }}>
+        <View style={{
+          padding: 15, backgroundColor: '#fff', borderRadius: 10, marginHorizontal: 15, shadowColor: '#bdbdbd', shadowOpacity: 0.25, shadowRadius: 10, elevation: 8, shadowOffset: {
+            width: 0,
+            height: 2
+          }
+        }}>
 
           <TouchableOpacity onPress={() => { router.push('/(tabs)/home/search/setDestination') }} style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, marginBottom: 10, backgroundColor: '#fff' }}>
             <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, fontWeight: 100, paddingHorizontal: 5 }}>Destination</Text>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>{location?location:"Noida"}</Text>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>{location ? location : "Noida"}</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', flex: 1 }}>
             <TouchableOpacity onPress={() => { router.push('/(tabs)/home/search/setDates') }} style={{
@@ -154,10 +302,10 @@ const router=useRouter()
                 Dates
               </Text>
               <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>
-                {(checkInDate && checkOutDate)?formatDateRange(checkInDate,checkOutDate):"Jan 1 - Jan 2"}
+                {(checkInDate && checkOutDate) ? formatDateRange(checkInDate, checkOutDate) : "Jan 1 - Jan 2"}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setDatesModal(true);dispatch(setRooms(1)) }} style={{
+            <TouchableOpacity onPress={() => { setDatesModal(true); dispatch(setRooms(1)) }} style={{
               flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, paddingHorizontal: 5, marginBottom: 10, backgroundColor: '#fff', marginLeft: 5
             }}>
               <Text style={{
@@ -183,13 +331,20 @@ const router=useRouter()
         <Text style={{ fontSize: 16, fontWeight: 'bold', marginHorizontal: 15, marginTop: 20 }}>Popular Cities</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 10 }}>
           {popularCities.map((city) => (
-            <TouchableOpacity onPress={()=>{
+            <TouchableOpacity onPress={() => {
               router.push({
                 pathname: "/explore",
                 params: { city: city.name },
               });
             }} key={Math.random()} style={{ alignItems: 'center', marginHorizontal: 10 }}>
-              <Image source={{ uri: city.image }} style={{ width: 80, height: 80, borderRadius: 50, }} />
+              <Image source={{ uri: city.image }} style={{ width: 80, height: 80, borderRadius:50,
+                shadowColor:"#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 10,
+                elevation: 5,
+
+               }} />
               <Text style={{ marginTop: 5, fontSize: 12, fontWeight: 'bold' }}>{city.name}</Text>
             </TouchableOpacity>
           ))}
@@ -221,9 +376,9 @@ const router=useRouter()
       <Modal
         visible={datesModal}
         animationType="slide"
-        onRequestClose={()=>setDatesModal(false)}
-        onDismiss={()=>setDatesModal(false)}
-      
+        onRequestClose={() => setDatesModal(false)}
+        onDismiss={() => setDatesModal(false)}
+
         transparent={true}
       >
         <View style={{

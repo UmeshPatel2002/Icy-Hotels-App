@@ -13,18 +13,33 @@ import { baseUrl } from "@/constants/server";
 import { Ionicons } from "@expo/vector-icons";
 
 const HistoryScreen = () => {
-  const [activeTab, setActiveTab] = useState<"Upcoming" | "Recent">("Upcoming");
+  const [activeTab, setActiveTab] = useState<"Current" | "Past">("Current");
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const user = useSelector((state: any) => state.user.userDetails);
 
-  const fetchBookings = async () => {
+  const fetchCurrentBookings = async () => {
     try {
       const response = await axios.get(`${baseUrl}/booking/upcoming-bookings`, {
         params: { userId: user?._id },
       });
       if (response.data) {
-        setBookings(response.data.bookings);
+        setBookings(response?.data?.bookings);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchPastBookings = async () => {
+    console.log("past bookings fetching")
+    try {
+      const response = await axios.get(`${baseUrl}/booking/booking-history`, {
+        params: { userId: user?._id },
+      });
+      if (response.data) {
+        setBookings(response?.data?.bookings);
       }
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -34,15 +49,11 @@ const HistoryScreen = () => {
   };
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    if(activeTab==="Current") fetchCurrentBookings();
+    else fetchPastBookings();
+  }, [activeTab]);
 
-  const filterBookings = (tab: "Upcoming" | "Recent") => {
-    const now = new Date();
-    return tab === "Upcoming"
-      ? bookings.filter((booking) => new Date(booking.checkInDate) >= now)
-      : bookings.filter((booking) => new Date(booking.checkInDate) < now);
-  };
+ 
 
 
 
@@ -212,7 +223,7 @@ const DetailRow = ({
     );
   }
 
-  const data = filterBookings(activeTab);
+  
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
@@ -245,19 +256,19 @@ const DetailRow = ({
             style={{
               flex: 1,
               paddingVertical: 12,
-              backgroundColor: activeTab === "Upcoming" ? "#ffb000" : "#e6e6e6",
+              backgroundColor: activeTab === "Current" ? "#ffb000" : "#e6e6e6",
               alignItems: "center",
             }}
-            onPress={() => setActiveTab("Upcoming")}
+            onPress={() => setActiveTab("Current")}
           >
             <Text
               style={{
                 fontSize: 16,
-                color: activeTab === "Upcoming" ? "#fff" : "#333",
+                color: activeTab === "Current" ? "#fff" : "#333",
                 fontWeight: "bold",
               }}
             >
-              Upcoming
+             Current
             </Text>
           </TouchableOpacity>
 
@@ -265,26 +276,26 @@ const DetailRow = ({
             style={{
               flex: 1,
               paddingVertical: 12,
-              backgroundColor: activeTab === "Recent" ? "#ffb000" : "#e6e6e6",
+              backgroundColor: activeTab === "Past" ? "#ffb000" : "#e6e6e6",
               alignItems: "center",
             }}
-            onPress={() => setActiveTab("Recent")}
+            onPress={() => setActiveTab("Past")}
           >
             <Text
               style={{
                 fontSize: 16,
-                color: activeTab === "Recent" ? "#fff" : "#333",
+                color: activeTab === "Past" ? "#fff" : "#333",
                 fontWeight: "bold",
               }}
             >
-              Recent
+              Past
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Booking List */}
         <FlatList
-          data={data}
+          data={bookings}
           renderItem={renderBooking}
           keyExtractor={(item) => item._id}
           ListEmptyComponent={
