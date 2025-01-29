@@ -50,6 +50,7 @@ const HotelCard = ({ hotel }: any) => {
           if (!user?._id) {
             setShowModal(true); // Open modal
           } else {
+            
             handleBookNow(); // Proceed to book
           }
         };
@@ -274,7 +275,8 @@ const HotelCard = ({ hotel }: any) => {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
+              gap:20,
               marginBottom: 16,
             }}
           >
@@ -290,7 +292,7 @@ const HotelCard = ({ hotel }: any) => {
               </Text>
             </View>
             
-            <View
+            {/* <View
               style={{
                 backgroundColor: "#ffecd0",
                 padding: 10,
@@ -300,7 +302,7 @@ const HotelCard = ({ hotel }: any) => {
               <Text style={{ fontSize: 14, color: "#ffb000" }}>
                 {hotel?.distance || 0} km away
               </Text>
-            </View>
+            </View> */}
             <View
               style={{
                 backgroundColor: "#ffecd0",
@@ -577,7 +579,7 @@ const HotelCard = ({ hotel }: any) => {
                 backgroundColor: "#ffb000",
                 alignItems: "center",
               }}
-              onPress={()=>{router.push("/(tabs)/profile/login")}}
+              onPress={()=>{setShowModal(false);router.push("/(tabs)/profile/login")}}
             >
               <Text
                 style={{
