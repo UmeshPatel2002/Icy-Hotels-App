@@ -9,7 +9,7 @@ import axios from "axios"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setLatitude, setLongitude, setUserAddress, setUserDetails } from '@/redux/reducers/userSlice';
 import { formatDateRange } from '@/logics/logics';
-import { setRooms } from '@/redux/reducers/hotelSlice';
+import { setCheckInDate, setCheckOutDate, setRooms } from '@/redux/reducers/hotelSlice';
 import * as Location from "expo-location";
 
 
@@ -75,6 +75,23 @@ const HomeScreen = () => {
     return () => backHandler.remove(); // Clean up the event listener
   }, [segments, router]);
 
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1); // Add one day to today's date
+    
+    // Format the date as YYYY-MM-DD using local date methods
+    const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+    const tomorrowString = `${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}-${tomorrow.getDate().toString().padStart(2, '0')}`;
+  
+    console.log("today:", todayString, "tomorrow:", tomorrowString);
+    
+    dispatch(setCheckInDate(todayString));
+    dispatch(setCheckOutDate(tomorrowString));
+  }, []);
+  
+  
+
   const fetchLocation = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -93,8 +110,8 @@ const HomeScreen = () => {
       };
       // Get current position
       const locationData = await Location.getCurrentPositionAsync(locationOptions);
-      setLoc(locationData.coords);
-      console.log("Location: ", locationData)
+      // setLoc(locationData?.coords);
+      // console.log("Location: ", locationData)
 
       // Use OpenCage API for reverse geocoding
       const { latitude, longitude } = locationData.coords;
@@ -103,7 +120,7 @@ const HomeScreen = () => {
       const response = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${OPENCAGE_API_KEY}`
       );
-      console.log("Address: ", response.data?.results[0]?.formatted)
+      // console.log("Address: ", response.data?.results[0]?.formatted)
 
       // Set the address in state
       if (response.data.results.length > 0) {
@@ -115,8 +132,8 @@ const HomeScreen = () => {
       } else {
         setErrorMsg("Failed to fetch address.");
       }
-    } catch (error) {
-      setErrorMsg("Error fetching location: " + error.message);
+    } catch (error:any) {
+      setErrorMsg("Error fetching location: "+error);
     } finally {
       setLoading(false);
     }
@@ -130,7 +147,7 @@ const HomeScreen = () => {
 
   // Logic to update room count based on guest count
   const updateRooms = (newRooms: number) => {
-    console.log('newRooms', newRooms);
+    // console.log('newRooms', newRooms);
     if (newRooms < rooms && guests > newRooms * 2) return;
     setRoomsLocal(newRooms);
     dispatch(setRooms(newRooms));
@@ -144,13 +161,10 @@ const HomeScreen = () => {
     dispatch(setRooms(Math.max(rooms, calculatedRooms)));
   }
   // Show modal on button click
-
-
-
  
-  const handleSearch = () => {
-    console.log('Search clicked with:', { destination, dates, roomsGuests });
-  };
+  // const handleSearch = () => {
+  //   console.log('Search clicked with:', { destination, dates, roomsGuests });
+  // };
 
   const handleHotelSearch = async () => {
 
@@ -183,7 +197,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView showsVerticalScrollIndicator={false}  style={{ flex: 1 }}>
         {/* Navbar with Logo */}
         <View style={{
           flex: 1,
@@ -342,7 +356,6 @@ const HomeScreen = () => {
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.25,
                 shadowRadius: 10,
-                elevation: 5,
 
                }} />
               <Text style={{ marginTop: 5, fontSize: 12, fontWeight: 'bold' }}>{city.name}</Text>

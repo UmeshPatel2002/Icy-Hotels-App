@@ -39,11 +39,11 @@ export default function Hotels() {
       const rooms=useSelector((state:any)=>state.hotel.rooms)
 
   const user=useSelector((state:any)=>state.user.userDetails)
-console.log(checkInDate, checkOutDate,user)
+// console.log(checkInDate, checkOutDate,user)
 const [isVisible, setIsVisible] = useState(false);
 const [modalMessage, setModalMessage] = useState("");
 const [isSuccess, setIsSuccess] = useState(false);
-    console.log(checkInDate, checkOutDate)
+    // console.log(checkInDate, checkOutDate)
 
   const closeModal = () => {
     setModalVisible(false);
@@ -52,7 +52,7 @@ const [isSuccess, setIsSuccess] = useState(false);
  
 
   const searchHotels = async () => {
-      console.log(location,checkInDate,checkOutDate,rooms)
+      // console.log(location,checkInDate,checkOutDate,rooms)
     try {
       setLoading(true);
       const res = await axios.get(`${baseUrl}/hotels/hotels-by-dates`, {
@@ -66,7 +66,7 @@ const [isSuccess, setIsSuccess] = useState(false);
 
       const searchedHotels = res.data;
       dispatch(setSearchedHotels(searchedHotels));
-      console.log(searchedHotels);
+      // console.log(searchedHotels,"Hotels");
       setLoading(false);
     } catch (error) {
       dispatch(setSearchedHotels([]));
@@ -117,7 +117,7 @@ const [isSuccess, setIsSuccess] = useState(false);
         
         <FlatList
           data={hotels}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => item[0]._id}
           renderItem={({ item }) => (
             <View
               style={{
@@ -128,12 +128,13 @@ const [isSuccess, setIsSuccess] = useState(false);
               }}
             >
               <HotelCard
-                key={item._id}
+                key={item[0]._id}
                 hotel={item}
                 
               />
             </View>
           )}
+          
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Text style={{ textAlign: "center", marginTop: 20 }}>

@@ -36,94 +36,95 @@ const HotelCard = ({ hotel }: any) => {
         const rooms=useSelector((state:any)=>state.hotel.rooms)
   
     const user=useSelector((state:any)=>state.user.userDetails)
-  console.log(checkInDate, checkOutDate,user)
+  // console.log(checkInDate, checkOutDate,user)
   const [isVisible, setIsVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-      console.log(checkInDate, checkOutDate)
+      // console.log(checkInDate, checkOutDate)
+      // console.log(hotel,"hotel");
         const [modalVisible, setModalVisible] = useState(false);
         const [loading,setLoading] = useState(false);
       
-        const [showModal, setShowModal] = useState(false);
+        // const [showModal, setShowModal] = useState(false);
 
-        const handlePress = () => {
-          if (!user?._id) {
-            setShowModal(true); // Open modal
-          } else {
+        // const handlePress = () => {
+        //   if (!user?._id) {
+        //     setShowModal(true); // Open modal
+        //   } else {
             
-            handleBookNow(); // Proceed to book
-          }
-        };
+        //     router.push("/(tabs)/home/search/bookingDescription");
+        //   }
+        // };
 
     const handleScroll = (event: any) => {
       const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
       setActiveIndex(newIndex);
     };
   
-    const handleBookNow = () => {
-      setModalVisible(true);
-    };
+    // const handleBookNow = () => {
+    //   setModalVisible(true);
+    // };
   
   
-    const confirmBooking = async () => {
-      console.log("confirming booking", rooms,user?._id,hotel?._id, rooms * hotel?.price);
-      try {
-        setLoading(true);
-        const res = await axios.post(`${baseUrl}/booking/book-room`, {
-          user: user?._id,
-          room: hotel?._id,
-          checkInDate: checkInDate,
-          checkOutDate: checkOutDate,
-          totalRooms: rooms,
-          status: "Confirmed",
-          paymentStatus: "Paid",
-          transactionId: "xyz",
-          totalPrice: rooms * hotel?.price,
-        });
+    // const confirmBooking = async () => {
+    //   // console.log("confirming booking", rooms,user?._id,hotel[0]?._id, rooms * hotel?.price);
+    //   try {
+    //     setLoading(true);
+    //     const res = await axios.post(`${baseUrl}/booking/book-room`, {
+    //       user: user?._id,
+    //       room: hotel?._id,
+    //       checkInDate: checkInDate,
+    //       checkOutDate: checkOutDate,
+    //       totalRooms: rooms,
+    //       status: "Confirmed",
+    //       paymentStatus: "Paid",
+    //       transactionId: "xyz",
+    //       totalPrice: rooms * hotel?.price,
+    //     });
   
-        if (res.data) {
-          console.log(res.data);
-          setIsSuccess(true);
-          setModalMessage("Booking Successful!");
-        setLoading(false);
+    //     if (res.data) {
+    //       // console.log(res.data);
+    //       setIsSuccess(true);
+    //       setModalMessage("Booking Successful!");
+    //     setLoading(false);
 
-          closeModal();
-          showPopup();
-        } else {
-          setIsSuccess(false);
-        setLoading(false);
+    //       closeModal();
+    //       showPopup();
+    //     } else {
+    //       setIsSuccess(false);
+    //     setLoading(false);
 
-          setModalMessage("Error booking hotel.");
-          closeModal();
-          showPopup();
-        }
-      } catch (error) {
-        console.error("Error booking hotel:", error);
-        setIsSuccess(false);
-        setLoading(false);
+    //       setModalMessage("Error booking hotel.");
+    //       closeModal();
+    //       showPopup();
+    //     }
+    //   } catch (error) {
+    //     console.error("Error booking hotel:", error);
+    //     setIsSuccess(false);
+    //     setLoading(false);
 
-        closeModal();
-        setModalMessage("Error booking hotel.");
-        showPopup();
-      }
-    }
+    //     closeModal();
+    //     setModalMessage("Error booking hotel.");
+    //     showPopup();
+    //   }
+    // }
 
-    const showPopup = () => {
-        setIsVisible(true);
-        setTimeout(() => {
-          setIsVisible(false);
-        }, 5000); // Hide the modal after 5 seconds
-      };
+    // const showPopup = () => {
+    //     setIsVisible(true);
+    //     setTimeout(() => {
+    //       setIsVisible(false);
+    //     }, 5000); // Hide the modal after 5 seconds
+    //   };
     
-      const closeModal = () => {
-        setModalVisible(false);
+      // const closeModal = () => {
+      //   setModalVisible(false);
        
-      };
+      // };
     
   
     return (
       <View
-        key={hotel?._id}
+        key={hotel[0]?._id}
         style={{
           backgroundColor: "#fff",
           marginVertical: 15,
@@ -146,8 +147,8 @@ const HotelCard = ({ hotel }: any) => {
             scrollEventThrottle={16}
             showsHorizontalScrollIndicator={false}
           >
-            {hotel?.hotelId?.images &&
-              hotel?.hotelId?.images.map((img, index) => (
+            {hotel[0]?.images &&
+              hotel[0]?.images.map((img:any, index:any) => (
                 <FastImage
                   key={index}
                   source={{ uri: img }}
@@ -173,7 +174,7 @@ const HotelCard = ({ hotel }: any) => {
               justifyContent: "center",
             }}
           >
-            {hotel?.hotelId?.images?.map((_, index) => (
+            {hotel[0]?.images?.map((_:any, index:any) => (
               <View
                 key={index}
                 style={{
@@ -199,19 +200,9 @@ const HotelCard = ({ hotel }: any) => {
               color: "#333",
             }}
           >
-            {hotel?.hotelId?.name}
+            {hotel[0]?.name}
           </Text>
-          {/* Hotel Description */}
-          <Text
-            style={{
-              fontSize: 14,
-              color: "#555",
-              marginBottom: 8,
-            }}
-            numberOfLines={2}
-          >
-            {hotel?.hotelId?.description}
-          </Text>
+          
           {/* Address */}
           <View
             style={{
@@ -232,43 +223,8 @@ const HotelCard = ({ hotel }: any) => {
                 color: "#777",
               }}
             >
-              {hotel?.hotelId?.hotelAddress}
+              {hotel[0]?.hotelAddress}
             </Text>
-          </View>
-  
-          {/* Room Type Section */}
-          <View style={{}}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 15,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "bold",
-                  marginRight: 8,
-                  color: "#333",
-                }}
-              >
-                Room Type:
-              </Text>
-              <Text
-                style={{
-                  backgroundColor: "#ffecd0",
-                  color: "#ffb000",
-                  fontWeight: "bold",
-                  fontSize: 14,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  borderRadius: 12,
-                }}
-              >
-                {hotel?.roomType}
-              </Text>
-            </View>
           </View>
   
           {/* Highlighted Info */}
@@ -288,68 +244,25 @@ const HotelCard = ({ hotel }: any) => {
               }}
             >
               <Text style={{ fontSize: 14, color: "#ffb000" }}>
-                Rs.{hotel?.price}/night
+                Starts From Rs.{hotel[1]?.price}/night
               </Text>
             </View>
-            
-            {/* <View
-              style={{
-                backgroundColor: "#ffecd0",
-                padding: 10,
-                borderRadius: 5,
-              }}
-            >
-              <Text style={{ fontSize: 14, color: "#ffb000" }}>
-                {hotel?.distance || 0} km away
-              </Text>
-            </View> */}
+            {(hotel[0]?.ratings.totalUsers>0 && hotel[0]?.ratings.totalRating>0)?
             <View
-              style={{
-                backgroundColor: "#ffecd0",
-                padding: 10,
-                borderRadius: 5,
-              }}
-            >
-              <Text style={{ fontSize: 14, color: "#ffb000" }}>
-                Rating: {hotel?.hotelId?.ratings?.totalRating} ⭐
-              </Text>
-            </View>
+            style={{
+              backgroundColor: "#ffecd0",
+              padding: 10,
+              borderRadius: 5,
+            }}
+          >
+            <Text style={{ fontSize: 14, color: "#ffb000" }}>
+              Rating: {hotel[0]?.ratings.totalRating/hotel[0]?.ratings.totalUsers} ⭐
+            </Text>
+          </View>:null
+            
+          }
            
           </View>
-  
-          {/* Amenities Section */}
-          <View style={{ marginBottom: 15 }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "bold",
-                marginBottom: 6,
-                color: "#333",
-              }}
-            >
-              Amenities:
-            </Text>
-            <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-              {hotel?.hotelId?.hotelAmenities?.map((amenity, index) => (
-                <View
-                  key={index}
-                  style={{
-                    backgroundColor: "#fdf6e3",
-                    borderColor: "#ffb000",
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    paddingVertical: 5,
-                    paddingHorizontal: 10,
-                    margin: 5,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, color: "#333" }}>{amenity}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-  
-          {/* Map Section */}
   
           {/* Book Now Button */}
           <TouchableOpacity
@@ -360,7 +273,7 @@ const HotelCard = ({ hotel }: any) => {
               alignItems: "center",
             }}
             onPress={() => {
-              handlePress()
+              router.push("/(tabs)/home/search/bookingDescription");
             }}
           >
             <Text
@@ -374,7 +287,7 @@ const HotelCard = ({ hotel }: any) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <Modal
+        {/* <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -423,7 +336,7 @@ const HotelCard = ({ hotel }: any) => {
               Are you sure you want to book this room?
             </Text>
 
-            {/* Action Buttons */}
+           
             <View
               style={{
                 flexDirection: "row",
@@ -476,9 +389,9 @@ const HotelCard = ({ hotel }: any) => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
-      <Modal visible={isVisible} transparent animationType="slide">
+      {/* <Modal visible={isVisible} transparent animationType="slide">
               <View
                 style={{
                   flex: 1,
@@ -510,9 +423,9 @@ const HotelCard = ({ hotel }: any) => {
                   </Text>
                 </View>
               </View>
-            </Modal>
+            </Modal> */}
 
-            <Modal
+            {/* <Modal
       animationType="slide"
       transparent={true}
       visible={showModal}
@@ -562,7 +475,7 @@ const HotelCard = ({ hotel }: any) => {
           </Text>
 
           {/* Action Buttons */}
-          <View
+          {/* <View
             style={{
               flexDirection: "column",
               justifyContent: "space-between",
@@ -615,7 +528,7 @@ const HotelCard = ({ hotel }: any) => {
           </View>
         </View>
       </View>
-    </Modal>
+    </Modal> */} 
       </View>
     );
   };

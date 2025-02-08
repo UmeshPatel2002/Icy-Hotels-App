@@ -24,6 +24,7 @@ const HistoryScreen = () => {
         params: { userId: user?._id },
       });
       if (response.data) {
+        // console.log(response.data);
         setBookings(response?.data?.bookings);
       }
     } catch (error) {
@@ -33,12 +34,13 @@ const HistoryScreen = () => {
     }
   };
   const fetchPastBookings = async () => {
-    console.log("past bookings fetching")
+    // console.log("past bookings fetching")
     try {
       const response = await axios.get(`${baseUrl}/booking/booking-history`, {
         params: { userId: user?._id },
       });
       if (response.data) {
+        // console.log(response.data);
         setBookings(response?.data?.bookings);
       }
     } catch (error) {
@@ -96,10 +98,10 @@ const renderBooking = ({ item }: { item: any }) => (
             color: "#1f2937",
           }}
         >
-          {item.room.roomType}
+          {item?.room?.roomType}
         </Text>
         <Text style={{ fontSize: 12, color: "#9ca3af" }}>
-          Booking ID: {item._id}
+          Booking ID: {item?._id}
         </Text>
       </View>
     </View>
@@ -117,39 +119,39 @@ const renderBooking = ({ item }: { item: any }) => (
     <View style={{ marginBottom: 12 }}>
       <DetailRow
         label="Hotel ID"
-        value={item.room.hotelId}
+        value={item?.room?.hotelId}
         icon="business"
         iconColor="#10b981"
       />
       <DetailRow
         label="Check-In"
-        value={new Date(item.checkInDate).toLocaleDateString()}
+        value={new Date(item?.checkInDate).toLocaleDateString()}
         icon="calendar"
         iconColor="#3b82f6"
       />
       <DetailRow
         label="Check-Out"
-        value={new Date(item.checkOutDate).toLocaleDateString()}
+        value={new Date(item?.checkOutDate).toLocaleDateString()}
         icon="calendar"
         iconColor="#ef4444"
       />
       <DetailRow
         label="Total Price"
-        value={`₹${item.totalPrice}`}
+        value={`₹${item?.totalPrice}`}
         icon="pricetag"
         iconColor="#f59e0b"
         isBold
       />
       <DetailRow
         label="Payment Status"
-        value={item.paymentStatus}
+        value={item?.paymentStatus}
         icon="wallet"
-        iconColor={item.paymentStatus === "Paid" ? "#10b981" : "#f43f5e"}
+        iconColor={item?.paymentStatus === "Paid" ? "#10b981" : "#f43f5e"}
         isHighlight
       />
       <DetailRow
         label="Status"
-        value={item.status}
+        value={item?.status}
         icon="checkmark-circle"
         iconColor="#6366f1"
       />
@@ -239,7 +241,7 @@ const DetailRow = ({
     marginTop:20
   }}
 >
-  Booking History
+  My Bookings
 </Text>
 
         <View

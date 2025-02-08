@@ -15,6 +15,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="hotelDescription" />
         <Stack.Screen name="setDatesAvailable" />
+        <Stack.Screen name="bookingPayment" />
+
 
      
 

@@ -13,8 +13,8 @@ const formatDate = (date: string): string => {
 };
 
 const HotelBookingScreen: React.FC = () => {
-    const [checkInDate, setCheckInDateLocal] = useState<string | null>(null);
-    const [checkOutDate, setCheckOutDateLocal] = useState<string | null>(null);
+    const [checkInDate, setCheckInDateLocal] = useState("");
+    const [checkOutDate, setCheckOutDateLocal] = useState("");
     const [selectedType, setSelectedType] = useState<'checkIn' | 'checkOut'>('checkIn');
     const [markedDates, setMarkedDates] = useState<any>({});
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,8 @@ const HotelBookingScreen: React.FC = () => {
 
     useEffect(() => {
         const today = new Date();
-        const todayString = today.toISOString().split('T')[0];
+        const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+
 
         setCheckInDateLocal(todayString);
         dispatch(setCheckInDate(todayString));

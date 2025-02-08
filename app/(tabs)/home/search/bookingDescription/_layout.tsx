@@ -13,11 +13,7 @@ export default function RootLayout() {
   
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="setDates" />
-        <Stack.Screen name="setDestination" />
-        <Stack.Screen name="booking" />
-        <Stack.Screen name="bookingDescription" />
-     
+        <Stack.Screen name="bookingPayment" />
 
 
 
