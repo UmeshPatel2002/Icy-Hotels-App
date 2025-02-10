@@ -13,19 +13,18 @@ const RatingAndReviews = ({
   userId,
   setAllReviews,
   isEditmode,
-  existingReview
+  existingReview,
 }: any) => {
   const [rating, setRating] = useState<number>(existingReview?.rating || 0);
   const [feedback, setFeedback] = useState(existingReview?.feedback || "");
   const dispatch = useDispatch();
 
- useEffect(() => {
-      if (isEditmode) {
-        setRating(existingReview.rating);
-        setFeedback(existingReview.feedback);
-      }
-    }, [existingReview, isEditmode]);
-
+  useEffect(() => {
+    if (isEditmode) {
+      setRating(existingReview.rating);
+      setFeedback(existingReview.feedback);
+    }
+  }, [existingReview, isEditmode]);
 
   const handleSubmit = async () => {
     if (!rating || !feedback) {
@@ -34,35 +33,46 @@ const RatingAndReviews = ({
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/rating/post-rating`, {
+      const baseUri = isEditmode
+        ? `${baseUrl}/rating/update-rating`
+        : `${baseUrl}/rating/post-rating`;
+      const reqData = {
         userId,
         hotelId: hotel[0]?._id,
         rating,
         feedback,
-      });
+      };
+      const response = isEditmode
+        ? await axios.patch(baseUri, {...reqData,ratingId:existingReview?._id })
+        : await axios.post(baseUri, { reqData });
 
       //   console.log("Response:", response); // Log response from API
       setAllReviews((review: any) => ({
-        ...review, // Spread the existing state
-        userRating: response.data, // Correct assignment of userRating
+        ...review, 
+        userRating: response.data, 
       }));
 
       //   console.log(hotel);
 
       alert("Review submitted successfully!");
-      // Calculate the updated hotel data
-      const updatedHotel = hotel.map((item: any, index: any) =>
-        index === 0
-          ? {
-              ...item,
-              ratings: {
-                ...item.ratings,
-                totalRating: (item.ratings?.totalRating || 0) + rating,
-                totalUsers: (item.ratings?.totalUsers || 0) + 1,
-              },
-            }
-          : item
-      );
+    
+
+      const updatedHotel = hotel.map((item: any, index: any) => {
+        if (index !== 0) return item;
+    
+        const existingRating = existingReview?.rating || 0; 
+        const totalUsers = isEditmode ? item.ratings?.totalUsers : (item.ratings?.totalUsers || 0) + 1;
+    
+        return {
+          ...item,
+          ratings: {
+            ...item.ratings,
+            totalRating: (item.ratings?.totalRating || 0) - existingRating + rating, 
+            totalUsers,
+          },
+        };
+      });
+    
 
       // Dispatch the updated hotel state
       dispatch(setSelectedHotel(updatedHotel));
@@ -73,7 +83,7 @@ const RatingAndReviews = ({
       setRating(0);
       setFeedback("");
     } catch (error) {
-      console.error("Error submitting review:", error); // Log detailed error
+      console.error("Error submitting review:", error); 
       alert("Failed to submit review");
     }
   };
@@ -108,7 +118,6 @@ const RatingAndReviews = ({
               justifyContent: "space-between",
               marginBottom: 10,
               alignItems: "center",
-              // paddingBottom: 12,
               gap: 10,
             }}
           >
@@ -121,7 +130,7 @@ const RatingAndReviews = ({
                 marginLeft: 10,
               }}
             >
-              {isEditmode ? "Edit Your Review":" Give Your Feedback"}
+              {isEditmode ? "Edit Your Review" : " Give Your Feedback"}
             </Text>
 
             {/* Close Button  */}
@@ -198,7 +207,9 @@ const RatingAndReviews = ({
             }}
             onPress={handleSubmit}
           >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>{isEditmode ? "Update Review" : "Submit"}</Text>
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>
+              {isEditmode ? "Update Review" : "Submit"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

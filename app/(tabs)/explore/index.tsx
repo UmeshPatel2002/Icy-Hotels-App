@@ -200,13 +200,13 @@ const ExploreScreen = () => {
           <Text
             style={{
               fontSize: 14,
-              fontFamily:"Poppins-Regular",
+              fontFamily:"Nunito-Regular",
               color: "#ff8c00",
               marginTop: 8,
               
             }}
           >Starts from :  
-          <Text style={{color:"#6EB057", fontFamily:"Poppins-SemiBold"}}> ₹{item[1]?.price}/night</Text>
+          <Text style={{color:"#6EB057", fontFamily:"Nunito-SemiBold"}}> ₹{item[1]?.price}/night</Text>
           </Text>
         </View>
       </TouchableOpacity>
@@ -263,7 +263,7 @@ const ExploreScreen = () => {
             style={{
               fontSize: 14,
               color: "#ff8c00",
-              fontFamily: "Poppins-Regular",
+              fontFamily: "Nunito-Regular",
             }}
           >
             {query ? `Showing results for: ${query}` : "All Hotels"}

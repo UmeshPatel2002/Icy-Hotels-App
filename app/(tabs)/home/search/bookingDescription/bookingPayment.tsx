@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons"; // Importing Expo icons
 import { baseUrl } from "@/constants/server";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import LottieView from "lottie-react-native";
 
 const PaymentScreen = () => {
   const router = useRouter();
@@ -423,39 +424,60 @@ const PaymentScreen = () => {
 
       {/* Security Note Section */}
 
-      <Modal visible={isVisible} transparent animationType="slide">
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <View
-            style={{
-              padding: 20,
-              borderRadius: 10,
-              width: "80%",
-              alignItems: "center",
-              backgroundColor: isSuccess ? "#d4edda" : "#f8d7da",
-              borderColor: isSuccess ? "#c3e6cb" : "#f5c6cb",
-              borderWidth: 1,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "bold",
-                textAlign: "center",
-                color: isSuccess ? "#155724" : "#721c24",
-              }}
-            >
-              {modalMessage}
-            </Text>
-          </View>
-        </View>
-      </Modal>
+         <Modal visible={isVisible} transparent animationType="slide">
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#fff",
+                }}
+              >
+                {/* <View
+                  style={{
+                    padding: 20,
+                    borderRadius: 10,
+                    width: "80%",
+                    alignItems: "center",
+                    backgroundColor: isSuccess ? "#d4edda" : "#f8d7da",
+                    borderColor: isSuccess ? "#c3e6cb" : "#f5c6cb",
+                    borderWidth: 1,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      color: isSuccess ? "#155724" : "#721c24",
+                    }}
+                  >
+                    {modalMessage}
+                  </Text>
+                </View> */}
+                {
+                  isSuccess &&
+                  <LottieView
+                  source={require('../../../../../assets/lottie/success.json')}
+                  autoPlay
+                  loop
+                  style={{ width: width, height: height }} // Adjust size
+                />
+                }
+                {
+                  isSuccess === false &&
+                  <LottieView
+                    source={require('../../../../../assets/lottie/failure.json')}
+                    autoPlay
+                    loop
+                    style={{ width: width, height: height }} // Adjust size
+                  />
+                }
+             
+      
+      
+              </View>
+            </Modal>
 
       <Modal
         animationType="slide"

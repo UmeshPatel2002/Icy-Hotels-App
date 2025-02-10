@@ -148,12 +148,6 @@ const HotelDescriptionScreen = () => {
     return text.length > charLimit ? text.slice(0, charLimit) : text;
   };
 
-  // const showPopup = () => {
-  //   setIsVisible(true);
-  //   setTimeout(() => {
-  //     setIsVisible(false);
-  //   }, 5000); // Hide the modal after 5 seconds
-  // };
 
   const closeModal = () => {
     setShowModal(false);
@@ -176,6 +170,7 @@ const HotelDescriptionScreen = () => {
         </View>
       ) : (
         <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true }
@@ -224,7 +219,7 @@ const HotelDescriptionScreen = () => {
             <Text
               style={{
                 fontSize: 22,
-                fontWeight: "bold",
+                fontFamily:"Nunito-Bold",
                 color: "#333",
                 marginBottom: 10,
               }}
@@ -237,7 +232,7 @@ const HotelDescriptionScreen = () => {
               style={{
                 fontSize: 16,
                 color: "#ffb000",
-                fontWeight: "bold",
+                fontFamily:"Nunito-SemiBold",
                 marginBottom: 10,
               }}
             >
@@ -265,6 +260,7 @@ const HotelDescriptionScreen = () => {
                 <Text
                   style={{
                     fontSize: 14,
+                    fontFamily:"Nunito-Regular",
                     color: "#555",
                     marginLeft: 8,
                     flexShrink: 1, 
@@ -279,7 +275,7 @@ const HotelDescriptionScreen = () => {
                       style={{
                         color: "#ffb000",
                         fontSize: 14,
-                        fontWeight: "bold",
+                        fontFamily:"NUnito-SemiBold",
                         
                       }}
                     >
@@ -292,7 +288,7 @@ const HotelDescriptionScreen = () => {
                         style={{
                           color: "#ffb000",
                           fontSize: 14,
-                          fontWeight: "bold",
+                          fontFamily:"NUnito-SemiBold",
                         }}
                       >
                         {"  "}
@@ -325,6 +321,7 @@ const HotelDescriptionScreen = () => {
                   style={{
                     fontSize: 14,
                     color: "#555",
+                    fontFamily:"Nunito-Regular",
                     marginLeft: 8,
                     flexShrink: 1, 
                   }}
@@ -338,7 +335,7 @@ const HotelDescriptionScreen = () => {
                       style={{
                         color: "#ffb000",
                         fontSize: 14,
-                        fontWeight: "bold",
+                        fontFamily:"NUnito-SemiBold",
                         
                       }}
                     >
@@ -351,7 +348,7 @@ const HotelDescriptionScreen = () => {
                         style={{
                           color: "#ffb000",
                           fontSize: 14,
-                          fontWeight: "bold",
+                          fontFamily:"NUnito-SemiBold",
                         }}
                       >
                         {"  "}
@@ -377,7 +374,7 @@ const HotelDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 16,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-SemiBold",
                   marginBottom: 10,
                   color: "#333",
                 }}
@@ -399,7 +396,7 @@ const HotelDescriptionScreen = () => {
                       <Text
                         style={{
                           fontSize: 12,
-                          fontWeight: "bold",
+                          fontFamily:"Nunito-Regular",
                           color: "#fff",
                         }}
                       >
@@ -431,7 +428,7 @@ const HotelDescriptionScreen = () => {
             >
               <Text
                 style={{
-                  fontFamily: "Poppins-Medium",
+                  fontFamily: "Nunito-SemiBold",
                   fontSize: 16,
                   fontWeight: "600",
                   marginBottom: 10,
@@ -532,7 +529,7 @@ const HotelDescriptionScreen = () => {
               >
                 <Text
                   style={{
-                    fontFamily: "Poppins-Medium",
+                    fontFamily: "Nunito-Medium",
                     fontSize: 14,
                     fontWeight: 100,
                     paddingHorizontal: 5,
@@ -543,7 +540,7 @@ const HotelDescriptionScreen = () => {
                 </Text>
                 <Text
                   style={{
-                    fontFamily: "Poppins-Regular",
+                    fontFamily: "Nunito-Regular",
                     fontSize: 12,
                     paddingHorizontal: 5,
                     textAlign: "center",
@@ -571,7 +568,7 @@ const HotelDescriptionScreen = () => {
                 >
                   <Text
                     style={{
-                      fontFamily: "Poppins-Regular",
+                      fontFamily: "Nunito-Regular",
                       fontSize: 12,
                       fontWeight: "100",
                       paddingHorizontal: 5,
@@ -581,7 +578,7 @@ const HotelDescriptionScreen = () => {
                   </Text>
                   <Text
                     style={{
-                      fontFamily: "Poppins-Medium",
+                      fontFamily: "Nunito-Medium",
                       fontSize: 14,
                       paddingHorizontal: 5,
                     }}
@@ -609,7 +606,7 @@ const HotelDescriptionScreen = () => {
                 >
                   <Text
                     style={{
-                      fontFamily: "Poppins-Regular",
+                      fontFamily: "Nunito-Regular",
                       fontSize: 12,
                       fontWeight: "100",
                       paddingHorizontal: 5,
@@ -619,7 +616,7 @@ const HotelDescriptionScreen = () => {
                   </Text>
                   <Text
                     style={{
-                      fontFamily: "Poppins-Medium",
+                      fontFamily: "Nunito-Medium",
                       fontSize: 14,
                       paddingHorizontal: 5,
                     }}
@@ -873,7 +870,7 @@ const HotelDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontFamily: "Poppins-SemiBold",
+                  fontFamily: "Nunito-SemiBold",
                   marginBottom: 20,
                 }}
               >
@@ -899,7 +896,7 @@ const HotelDescriptionScreen = () => {
                 style={{
                   fontSize: 14,
                   marginRight: 10,
-                  fontFamily: "Poppins-Regular",
+                  fontFamily: "Nunito-Regular",
                 }}
               >
                 Number of Guests:
@@ -934,7 +931,7 @@ const HotelDescriptionScreen = () => {
                 style={{
                   fontSize: 14,
                   marginRight: 10,
-                  fontFamily: "Poppins-Regular",
+                  fontFamily: "Nunito-Regular",
                 }}
               >
                 Number of Rooms:

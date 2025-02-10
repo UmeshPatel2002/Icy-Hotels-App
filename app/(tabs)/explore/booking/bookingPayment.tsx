@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons"; // Importing Expo icons
 import { baseUrl } from "@/constants/server";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import LottieView from 'lottie-react-native';
 
 const PaymentScreen = () => {
   const router = useRouter();
@@ -429,10 +430,10 @@ const PaymentScreen = () => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "#fff",
           }}
         >
-          <View
+          {/* <View
             style={{
               padding: 20,
               borderRadius: 10,
@@ -453,7 +454,28 @@ const PaymentScreen = () => {
             >
               {modalMessage}
             </Text>
-          </View>
+          </View> */}
+          {
+            isSuccess &&
+            <LottieView
+            source={require('../../../../assets/lottie/success.json')}
+            autoPlay
+            loop
+            style={{ width: width, height: height }} // Adjust size
+          />
+          }
+          {
+            isSuccess === false &&
+            <LottieView
+              source={require('../../../../assets/lottie/failure.json')}
+              autoPlay
+              loop
+              style={{ width: width, height: height }} // Adjust size
+            />
+          }
+       
+
+
         </View>
       </Modal>
       <Modal
