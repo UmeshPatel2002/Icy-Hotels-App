@@ -141,50 +141,9 @@ const BookingDescriptionScreen = () => {
     }
   };
 
-  const confirmBooking = async () => {
-    // console.log(
-    //   "confirming booking",
-    //   rooms,
-    //   user?._id,
-    //   hotel?._id,
-    //   rooms* selectedPrice
-    // );
-    try {
-      const res = await axios.post(`${baseUrl}/booking/book-room`, {
-        user: user?._id,
-        room: hotel[0]?._id,
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate,
-        totalRooms: rooms,
-        status: "Confirmed",
-        paymentStatus: "Paid",
-        transactionId: "xyz",
-        totalPrice: rooms * selectedPrice,
-      });
-
-      if (res.data) {
-        // console.log(res.data);
-        setIsSuccess(true);
-        setModalMessage("Booking Successful!");
-        closeModal();
-        showPopup();
-      } else {
-        setIsSuccess(false);
-        setModalMessage("Error booking hotel.");
-        closeModal();
-        showPopup();
-      }
-    } catch (error) {
-      console.error("Error booking hotel:", error);
-      setIsSuccess(false);
-      closeModal();
-      setModalMessage("Error booking hotel.");
-      showPopup();
-    }
-  };
 
   const getLimitedText = (text: any, charLimit: any) => {
-    return text.length > charLimit ? text.slice(0, charLimit) + "..." : text;
+    return text.length > charLimit ? text.slice(0, charLimit) : text;
   };
 
   const showPopup = () => {
@@ -243,11 +202,6 @@ const BookingDescriptionScreen = () => {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             marginTop: -40,
-            // elevation: 5,
-            // shadowColor: "#000",
-            // shadowOffset: { width: 0, height: 2 },
-            // shadowOpacity: 0.1,
-            // shadowRadius: 8,
           }}
         >
           {/* Hotel Name */}
@@ -280,62 +234,114 @@ const BookingDescriptionScreen = () => {
               flexDirection: "row",
               alignItems: "center",
               marginBottom: 10,
+              flexWrap: "wrap", // Ensures content wraps
             }}
           >
             <MaterialIcons name="location-on" size={24} color="#ffb000" />
-            <View>
+            <View
+              style={{
+                flex: 1, // Ensures content does not overflow
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
               <Text
                 style={{
                   fontSize: 14,
                   color: "#555",
                   marginLeft: 8,
+                  flexShrink: 1,
                 }}
               >
-                {getLimitedText(hotel[0].hotelAddress, locationCharLimit)}
+                {getLimitedText(hotel[0]?.hotelAddress, locationCharLimit)}
+                {hotel[0]?.hotelAddress?.length > locationCharLimit ? (
+                  <Text
+                    onPress={() =>
+                      setLocationCharLimit(locationCharLimit + 100)
+                    }
+                    style={{
+                      color: "#ffb000",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {"  "}Show More...
+                  </Text>
+                ) : (
+                  hotel[0]?.hotelAddress?.length > 80 && (
+                    <Text
+                      onPress={() => setLocationCharLimit(80)}
+                      style={{
+                        color: "#ffb000",
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {"  "}
+                      Show Less
+                    </Text>
+                  )
+                )}
               </Text>
-              {hotel[0].hotelAddress.length > locationCharLimit ? (
-                <TouchableOpacity
-                  onPress={() => setLocationCharLimit(locationCharLimit + 100)}
-                >
-                  <Text
-                    style={{
-                      color: "#ffb000",
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Show More
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={() => setLocationCharLimit(100)}>
-                  <Text
-                    style={{
-                      color: "#ffb000",
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {hotel[0]?.hotelAddress.length > 100 ? (
-                      <Text>Show Less</Text>
-                    ) : null}
-                  </Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
 
           {/* Hotel Description */}
-          <Text
+          <View
             style={{
-              fontSize: 14,
-              lineHeight: 22,
-              color: "#555",
-              marginBottom: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 10,
+              flexWrap: "wrap", // Ensures content wraps
             }}
           >
-            {hotel[0]?.description}
-          </Text>
+            <View
+              style={{
+                flex: 1, // Ensures content does not overflow
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: "#555",
+                  marginLeft: 8,
+                  flexShrink: 1,
+                }}
+              >
+                {getLimitedText(hotel[0]?.description, descCharLimit)}
+                {hotel[0]?.description?.length > descCharLimit ? (
+                  <Text
+                    onPress={() => setDescCharLimit(descCharLimit + 100)}
+                    style={{
+                      color: "#ffb000",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {"  "}Show More...
+                  </Text>
+                ) : (
+                  hotel[0]?.description?.length > 80 && (
+                    <Text
+                      onPress={() => setDescCharLimit(80)}
+                      style={{
+                        color: "#ffb000",
+                        fontSize: 14,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {"  "}
+                      Show Less
+                    </Text>
+                  )
+                )}
+              </Text>
+            </View>
+          </View>
 
           {/* Amenities */}
           <View

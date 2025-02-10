@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { baseUrl } from "@/constants/server";
@@ -6,10 +6,27 @@ import { setSelectedHotel } from "@/redux/reducers/hotelSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
-const RatingAndReviews = ({ visible, onClose, hotel, userId,setAllReviews }: any) => {
-  const [rating, setRating] = useState<number>(0);
-  const [feedback, setFeedback] = useState("");
+const RatingAndReviews = ({
+  visible,
+  onClose,
+  hotel,
+  userId,
+  setAllReviews,
+  isEditmode,
+  existingReview
+}: any) => {
+  const [rating, setRating] = useState<number>(existingReview?.rating || 0);
+  const [feedback, setFeedback] = useState(existingReview?.feedback || "");
   const dispatch = useDispatch();
+
+ useEffect(() => {
+      if (isEditmode) {
+        setRating(existingReview.rating);
+        setFeedback(existingReview.feedback);
+      }
+    }, [existingReview, isEditmode]);
+
+
   const handleSubmit = async () => {
     if (!rating || !feedback) {
       alert("Please fill all fields");
@@ -19,41 +36,39 @@ const RatingAndReviews = ({ visible, onClose, hotel, userId,setAllReviews }: any
     try {
       const response = await axios.post(`${baseUrl}/rating/post-rating`, {
         userId,
-        hotelId:hotel[0]?._id,
+        hotelId: hotel[0]?._id,
         rating,
         feedback,
       });
 
-    //   console.log("Response:", response); // Log response from API
-      setAllReviews((review:any) => ({
+      //   console.log("Response:", response); // Log response from API
+      setAllReviews((review: any) => ({
         ...review, // Spread the existing state
         userRating: response.data, // Correct assignment of userRating
       }));
-      
 
-    //   console.log(hotel);
+      //   console.log(hotel);
 
       alert("Review submitted successfully!");
       // Calculate the updated hotel data
-const updatedHotel = hotel.map((item, index) =>
-    index === 0
-      ? {
-          ...item,
-          ratings: {
-            ...item.ratings,
-            totalRating: (item.ratings?.totalRating || 0) + rating,
-            totalUsers: (item.ratings?.totalUsers || 0) + 1,
-          },
-        }
-      : item
-  );
-  
-  // Dispatch the updated hotel state
-  dispatch(setSelectedHotel(updatedHotel));
-  
-    // console.log("after updating",hotel);
-    
-      
+      const updatedHotel = hotel.map((item: any, index: any) =>
+        index === 0
+          ? {
+              ...item,
+              ratings: {
+                ...item.ratings,
+                totalRating: (item.ratings?.totalRating || 0) + rating,
+                totalUsers: (item.ratings?.totalUsers || 0) + 1,
+              },
+            }
+          : item
+      );
+
+      // Dispatch the updated hotel state
+      dispatch(setSelectedHotel(updatedHotel));
+
+      // console.log("after updating",hotel);
+
       onClose();
       setRating(0);
       setFeedback("");
@@ -91,9 +106,10 @@ const updatedHotel = hotel.map((item, index) =>
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
+              marginBottom: 10,
               alignItems: "center",
-              paddingBottom: 12,
-              gap:10
+              // paddingBottom: 12,
+              gap: 10,
             }}
           >
             {/* Feedback Title */}
@@ -105,10 +121,10 @@ const updatedHotel = hotel.map((item, index) =>
                 marginLeft: 10,
               }}
             >
-              Give Your Feedback
+              {isEditmode ? "Edit Your Review":" Give Your Feedback"}
             </Text>
 
-            {/* Close Button */}
+            {/* Close Button  */}
             <TouchableOpacity
               onPress={onClose}
               style={{
@@ -116,20 +132,22 @@ const updatedHotel = hotel.map((item, index) =>
                 paddingHorizontal: 2,
                 paddingVertical: 2,
                 borderRadius: 50,
-            
                 marginRight: 6,
-                justifyContent:"center",
-                alignItems:"center",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-             <Ionicons name="close" size={20} color="white" />
+              <Ionicons name="close" size={20} color="white" />
             </TouchableOpacity>
           </View>
 
           {/* Star Rating System */}
           <View style={{ flexDirection: "row", marginBottom: 12 }}>
             {[1, 2, 3, 4, 5].map((star) => (
-              <TouchableOpacity key={star} onPress={() => handleStarPress(star)}>
+              <TouchableOpacity
+                key={star}
+                onPress={() => handleStarPress(star)}
+              >
                 <Text
                   style={{
                     fontSize: 30,
@@ -180,7 +198,7 @@ const updatedHotel = hotel.map((item, index) =>
             }}
             onPress={handleSubmit}
           >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>Submit</Text>
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>{isEditmode ? "Update Review" : "Submit"}</Text>
           </TouchableOpacity>
         </View>
       </View>

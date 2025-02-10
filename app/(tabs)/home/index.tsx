@@ -12,7 +12,6 @@ import { formatDateRange } from '@/logics/logics';
 import { setCheckInDate, setCheckOutDate, setRooms } from '@/redux/reducers/hotelSlice';
 import * as Location from "expo-location";
 
-
 const popularCities = [
   { name: 'Noida', image: 'https://images.unsplash.com/photo-1619542402915-dcaf30e4e2a1?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
   { name: 'Delhi', image: 'https://images.unsplash.com/photo-1598977054780-2dc700fdc9d3?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
@@ -23,14 +22,6 @@ const popularCities = [
   { name: 'Ghaziabad', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
   { name: 'Chennai', image: 'https://plus.unsplash.com/premium_photo-1666805690489-59d72f05b371?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
 ];
-
-const nearByHotels = [
-  { name: 'Hotel 1', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-  { name: 'Hotel 2', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
-  { name: 'Hotel 3', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
-  { name: 'Hotel 4', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' },
-  { name: 'Hotel 5', image: 'https://plus.unsplash.com/premium_photo-1661964071015-d97428970584?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90' }
-]
 
 const HomeScreen = () => {
   const [destination, setDestination] = useState('');
@@ -160,11 +151,6 @@ const HomeScreen = () => {
     setGuests(newGuestCount);
     dispatch(setRooms(Math.max(rooms, calculatedRooms)));
   }
-  // Show modal on button click
- 
-  // const handleSearch = () => {
-  //   console.log('Search clicked with:', { destination, dates, roomsGuests });
-  // };
 
   const handleHotelSearch = async () => {
 
@@ -181,8 +167,6 @@ const HomeScreen = () => {
 
   const fetchUserData = async () => {
     try {
-      // await AsyncStorage.removeItem("userDetails");
-      // dispatch(setUserDetails(null));
       const userData = await AsyncStorage.getItem("userDetails");
       console.log("fetching user data");
       if (userData) {
@@ -363,17 +347,6 @@ const HomeScreen = () => {
           ))}
         </ScrollView>
 
-        {/* <Text style={{ fontSize: 16, fontWeight: 'bold', marginHorizontal: 15, marginTop: 10 }}>Hotels Near Me</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 10 }}>
-          {nearByHotels.map((hotel) => (
-            <TouchableOpacity onPress={()=>{
-              router.push("/(tabs)/explore/booking/searchedHotelDescription");
-            }} key={Math.random()} style={{ alignItems: 'center', marginHorizontal: 10 }}>
-              <Image source={{ uri: hotel.image }} style={{ width: 80, height: 80, borderRadius: 50, }} />
-              <Text style={{ marginTop: 5, fontSize: 12, fontWeight: 'bold' }}>{hotel.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView> */}
 
         {/* Additional Section: Offers */}
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 15, marginTop: 20 }}>Exclusive Offers</Text>

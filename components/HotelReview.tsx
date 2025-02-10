@@ -1,59 +1,74 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable,FlatList } from "react-native";
+import { View, Text, Pressable, FlatList, TouchableOpacity } from "react-native";
 import RatingAndReviews from "./RatingAndReviews";
 import { baseUrl } from "@/constants/server";
 import axios from "axios";
 
-const HotelReviews = ({ hotel, userId}: any) => {
-  const [showReviews, setShowReviews] = useState(false);
+const HotelReviews = ({ hotel, userId }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [allReviews, setAllReviews] = useState({ allRatings: [], userRating: null });
-//   console.log('Hotel Data:', hotel);
+  const [isReviewEditable, setIsReviewEditable]=useState(false);
+  const [allReviews, setAllReviews] = useState({
+    allRatings: [],
+    userRating: null,
+  });
+  //   console.log('Hotel Data:', hotel);
 
   useEffect(() => {
     fetchRatings();
-  }, [ userId]); 
+  }, [userId]);
 
   const fetchRatings = async () => {
     try {
       const res = await axios.get(`${baseUrl}/rating/get-hotel-ratings`, {
         params: {
-          hotelId:hotel[0]?._id,
+          hotelId: hotel[0]?._id,
           userId,
         },
       });
       setAllReviews(res.data);
-
-
-
     } catch (error) {
       console.log(error, "Error getting ratings");
     }
   };
+
   const hasReviewed = allReviews?.userRating?.userId === userId;
 
-//   console.log(allReviews,"All reviews");
+  //   console.log(allReviews,"All reviews");
 
   return (
-    
     <View style={{ padding: 20 }}>
-        <View>
+      {!hasReviewed && (
+        <View style={{ marginTop: 10, alignItems: "center" }}>
           <Pressable
             onPress={() => setModalVisible(true)}
-            style={{ marginTop: 6 }}
             disabled={hasReviewed}
+            style={({ pressed }) => [
+              {
+                backgroundColor: hasReviewed ? "#ccc" : "#ffb000",
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                opacity: pressed ? 0.7 : 1, // Adds feedback on press
+              },
+            ]}
           >
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
-                color: hasReviewed ? "#ccc" : "#ffb000", 
+                color: hasReviewed ? "#888" : "#fff",
+                textAlign: "center",
               }}
             >
-              {hasReviewed ?null: "Add Review"}
+              Add Review
             </Text>
           </Pressable>
-      </View>
+        </View>
+      )}
 
       {userId && hasReviewed && allReviews?.userRating && (
         <View
@@ -66,23 +81,40 @@ const HotelReviews = ({ hotel, userId}: any) => {
             marginBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>Your Review</Text>
+          <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
+              Your Review
+            </Text>
+             <Pressable 
+             onPress={() => {
+              setIsReviewEditable(true);
+              setModalVisible(true);
+            }}
+             style={{justifyContent:"flex-end"}}
+             >
+              <Text style={{
+                fontSize: 14,
+                fontWeight: "bold",
+                color:"#ffb000",
+                textAlign: "center",
+              }}>Edit</Text>
+             </Pressable>
+          </View>
           <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: 4 }}>
-            {allReviews?.userRating?.rating} ⭐ 
+            {allReviews?.userRating?.rating} ⭐
           </Text>
+
           <Text style={{ fontSize: 14, color: "#666", marginTop: 4 }}>
             {allReviews?.userRating?.feedback}
           </Text>
-          
         </View>
       )}
 
-
       {/* Reviews Section */}
-      {allReviews?.allRatings.length>0 && (
+      {allReviews?.allRatings.length > 0 && (
         <FlatList
           data={allReviews?.allRatings}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item: any) => item._id}
           renderItem={({ item }) => (
             <View
               style={{
@@ -98,23 +130,28 @@ const HotelReviews = ({ hotel, userId}: any) => {
                 User ID: {item.userId}
               </Text>
               <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: 4 }}>
-                {item.rating} ⭐ 
+                {item.rating} ⭐
               </Text>
-              <Text style={{ fontSize: 14, color: "#666", marginTop: 4 }}>{item.feedback}</Text>
-              
+              <Text style={{ fontSize: 14, color: "#666", marginTop: 4 }}>
+                {item.feedback}
+              </Text>
             </View>
           )}
         />
       )}
 
-
       {/* Rating and Review Modal */}
       <RatingAndReviews
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setIsReviewEditable(false);
+        }}
         hotel={hotel}
         userId={userId}
         setAllReviews={setAllReviews}
+        isEditmode={isReviewEditable}
+        existingReview={allReviews?.userRating}
       />
     </View>
   );

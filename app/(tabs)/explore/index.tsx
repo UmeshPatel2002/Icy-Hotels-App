@@ -179,7 +179,7 @@ const ExploreScreen = () => {
             {item[0]?.name}
           </Text>
           <Text style={{ fontSize: 12, color: "#777", marginBottom: 6 }}>
-            {item[0]?.hotelAddress}, {item[0]?.hotelCity}
+            {item[0]?.hotelAddress?.substring(0, 36)}, {item[0]?.hotelCity}
           </Text>
 
           {/* Rating Display */}

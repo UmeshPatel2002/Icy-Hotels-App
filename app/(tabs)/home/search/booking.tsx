@@ -45,9 +45,9 @@ const [modalMessage, setModalMessage] = useState("");
 const [isSuccess, setIsSuccess] = useState(false);
     // console.log(checkInDate, checkOutDate)
 
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+  // const closeModal = () => {
+  //   setModalVisible(false);
+  // };
 
  
 
