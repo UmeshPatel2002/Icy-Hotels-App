@@ -168,7 +168,7 @@ const SetDestination: React.FC = () => {
                 borderBottomColor: '#eee',
             }}
         >
-            <Text style={{ fontSize: 16, color: '#333' }}>{item}</Text>
+            <Text style={{ fontSize: 16,fontFamily: "Nunito-Regular", color: '#333' }}>{item}</Text>
         </TouchableOpacity>
     );
 
@@ -202,7 +202,7 @@ const SetDestination: React.FC = () => {
                     <Text
                         style={{
                             fontSize: 20,
-                            fontWeight: 'bold',
+                            fontFamily: "Nunito-SemiBold",
                             color: '#333',
                         }}
                     >
@@ -232,7 +232,6 @@ const SetDestination: React.FC = () => {
                         marginTop: 8,
                     }}
                 />
-            {/* </ScrollView> */}
         </SafeAreaView>
     );
 };

@@ -117,11 +117,10 @@ const PaymentScreen = () => {
         <Text
           style={{
             fontSize: 20,
-            fontWeight: "600",
             color: "#333",
             textTransform: "uppercase",
             letterSpacing: 1,
-            fontFamily: "Poppins-SemiBold",
+            fontFamily: "Nunito-SemiBold",
           }}
         >
           Payment Invoice
@@ -177,7 +176,7 @@ const PaymentScreen = () => {
             borderBottomWidth: 1,
             borderBottomColor: "#eee",
             paddingBottom: 10,
-            fontFamily: "Poppins-Medium",
+            fontFamily: "Nunito-Medium",
           }}
         >
           Booking Details
@@ -208,9 +207,9 @@ const PaymentScreen = () => {
             style={{ marginRight: 12 }}
           />
           <Text
-            style={{ fontSize: 15, color: "#333", fontWeight: "700", flex: 1 }}
+            style={{ fontSize: 15, color: "#333",fontFamily:"Nunito-Regular", flex: 1 }}
           >
-            <Text style={{ fontWeight: "bold" }}>Hotel: </Text>
+            <Text style={{ fontFamily:"Nunito-SemiBold" }}>Hotel: </Text>
             {hotelName}
           </Text>
         </View>
@@ -239,9 +238,9 @@ const PaymentScreen = () => {
             style={{ marginRight: 12 }}
           />
           <Text
-            style={{ fontSize: 15, color: "#444", fontWeight: "600", flex: 1 }}
-          >
-            <Text style={{ fontWeight: "bold", color: "#2c3e50" }}>
+            style={{ fontSize: 15, color: "#333",fontFamily:"Nunito-Regular", flex: 1 }}
+            >
+              <Text style={{ fontFamily:"Nunito-SemiBold" }}>
               Room Type:{" "}
             </Text>
             {roomType}
@@ -272,9 +271,9 @@ const PaymentScreen = () => {
             style={{ marginRight: 12 }}
           />
           <Text
-            style={{ fontSize: 15, color: "#333", fontWeight: "600", flex: 1 }}
-          >
-            <Text style={{ fontWeight: "bold" }}>Check-In: </Text>
+            style={{ fontSize: 15, color: "#333",fontFamily:"Nunito-Regular", flex: 1 }}
+            >
+              <Text style={{ fontFamily:"Nunito-SemiBold" }}>Check-In: </Text>
             {checkInDate}
           </Text>
         </View>
@@ -303,9 +302,9 @@ const PaymentScreen = () => {
             style={{ marginRight: 12 }}
           />
           <Text
-            style={{ fontSize: 15, color: "#333", fontWeight: "600", flex: 1 }}
-          >
-            <Text style={{ fontWeight: "bold" }}>Check-Out: </Text>
+            style={{ fontSize: 15, color: "#333",fontFamily:"Nunito-Regular", flex: 1 }}
+            >
+              <Text style={{ fontFamily:"Nunito-SemiBold" }}>Check-Out: </Text>
             {checkOutDate}
           </Text>
         </View>
@@ -335,9 +334,9 @@ const PaymentScreen = () => {
           />
 
           <Text
-            style={{ fontSize: 15, color: "#333", fontWeight: "600", flex: 1 }}
-          >
-            <Text style={{ fontWeight: "bold" }}>Rooms: </Text>
+            style={{ fontSize: 15, color: "#333",fontFamily:"Nunito-Regular", flex: 1 }}
+            >
+              <Text style={{ fontFamily:"Nunito-SemiBold" }}>Rooms: </Text>
             {numRooms}
           </Text>
         </View>
@@ -371,14 +370,13 @@ const PaymentScreen = () => {
               color: "green",
               fontWeight: "600",
               flex: 1,
-              fontFamily: "Poppins-Medium",
+              fontFamily: "Nunito-Medium",
             }}
           >
             <Text
               style={{
-                fontWeight: "bold",
                 color: "#333",
-                fontFamily: "Poppins-Regular",
+                fontFamily: "Nunito-SemiBold",
               }}
             >
               Total:{" "}
@@ -406,8 +404,6 @@ const PaymentScreen = () => {
         onPress={() => {
           handlePress();
           console.log("Proceeding to payment...");
-
-          // Example: router.push('/PaymentConfirmation');
         }}
       >
         <Text
@@ -433,28 +429,7 @@ const PaymentScreen = () => {
                   backgroundColor: "#fff",
                 }}
               >
-                {/* <View
-                  style={{
-                    padding: 20,
-                    borderRadius: 10,
-                    width: "80%",
-                    alignItems: "center",
-                    backgroundColor: isSuccess ? "#d4edda" : "#f8d7da",
-                    borderColor: isSuccess ? "#c3e6cb" : "#f5c6cb",
-                    borderWidth: 1,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      color: isSuccess ? "#155724" : "#721c24",
-                    }}
-                  >
-                    {modalMessage}
-                  </Text>
-                </View> */}
+                
                 {
                   isSuccess &&
                   <LottieView

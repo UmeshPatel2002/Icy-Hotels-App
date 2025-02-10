@@ -125,7 +125,7 @@ const RatingAndReviews = ({
             <Text
               style={{
                 fontSize: 20,
-                fontWeight: "bold",
+                fontFamily:"Nunito-SemiBold",
                 color: "#333",
                 marginLeft: 10,
               }}
@@ -207,7 +207,7 @@ const RatingAndReviews = ({
             }}
             onPress={handleSubmit}
           >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            <Text style={{ color: "#fff", fontFamily:"Nunito-SemiBold" }}>
               {isEditmode ? "Update Review" : "Submit"}
             </Text>
           </TouchableOpacity>

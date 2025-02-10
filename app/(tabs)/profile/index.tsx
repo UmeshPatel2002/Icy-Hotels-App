@@ -177,10 +177,10 @@ const UserProfile = () => {
               </TouchableOpacity>
             )}
           </View>
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
+          <Text style={{ fontSize: 20, fontFamily:"Nunito-SemiBold", marginTop: 10 }}>
             {user?.name ? `${user?.name}` : "User"}
           </Text>
-          <Text style={{ fontSize: 14, color: "#666" }}>
+          <Text style={{ fontSize: 14,fontFamily:"Nunito-Regular", color: "#666" }}>
             {user?.phoneNumber ? `${user?.phoneNumber}` : "+91XXXXXXXXXX"}
           </Text>
         </View>
@@ -202,7 +202,7 @@ const UserProfile = () => {
             <Ionicons name="location-outline" size={20} color="#666" />
 
             <Text
-              style={{ marginLeft: 10, fontSize: 16, color: "#333", flex: 1 }}
+              style={{ marginLeft: 10, fontSize: 16,fontFamily:"Nunito-Regular", color: "#333", flex: 1 }}
             >
               {user?.address || "XYZ, INDIA"}
             </Text>
@@ -249,14 +249,14 @@ const UserProfile = () => {
                     style={{ width: "70%", marginLeft: 10 }}
                   >
                     <Text
-                      style={{ width: "100%", fontSize: 16, color: "#333" }}
+                      style={{ width: "100%", fontSize: 16,fontFamily:"Nunito-Regular", color: "#333" }}
                     >
                       {user.email || "abc@gmail.com"}
                     </Text>
                   </ScrollView>
                 )
               ) : (
-                <Text style={{ fontSize: 16, color: "#333" , marginLeft: 10 }}>
+                <Text style={{ fontSize: 16, color: "#333" ,fontFamily:"Nunito-Regular", marginLeft: 10 }}>
                   abc@gmail.com
                 </Text>
               )}
@@ -322,7 +322,7 @@ const UserProfile = () => {
             }}
           >
             <Ionicons name="happy-outline" size={20} color="#666" />
-            <Text style={{ marginLeft: 10, fontSize: 16, color: "#333" }}>
+            <Text style={{ marginLeft: 10, fontSize: 16,fontFamily:"Nunito-Regular", color: "#333" }}>
               {user?.gender ? user?.gender : "Male"}
             </Text>
           </View>
@@ -355,7 +355,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                   }}
                 >
                   My Bookings
@@ -383,7 +383,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                   }}
                 >
                   Logout
@@ -403,14 +403,14 @@ const UserProfile = () => {
               >
                 <Text
                   style={{
-                    fontFamily: "Poppins-SemiBold",
+                    fontFamily: "Nunito-SemiBold",
                     fontSize: 16,
                     textAlign: "center",
                   }}
                 >
                   Welcome!
                 </Text>
-                <Text style={{ fontSize: 14, textAlign: "center" }}>
+                <Text style={{ fontSize: 14,fontFamily:"Nunito-SemiBold", textAlign: "center" }}>
                   Please signup / login
                 </Text>
               </View>
@@ -435,7 +435,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                   }}
                 >
                   SignUp / Login
@@ -449,10 +449,10 @@ const UserProfile = () => {
         <View
           style={{ alignItems: "center", marginTop: "auto", marginBottom: 20 }}
         >
-          <Text style={{ fontSize: 16, fontStyle: "italic", color: "#666" }}>
+          <Text style={{ fontSize: 16, fontFamily:"Nunito-Italic", color: "#666" }}>
             Icy Hotels
           </Text>
-          <Text style={{ fontSize: 12, color: "#999" }}>Connect with us</Text>
+          <Text style={{ fontSize: 12,fontFamily:"Nunito-Regular", color: "#999" }}>Connect with us</Text>
         </View>
       </ScrollView>
       <Modal

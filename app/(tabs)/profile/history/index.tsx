@@ -200,6 +200,7 @@ const DetailRow = ({
     <Text
       style={{
         fontSize: 14,
+        fontFamily:"Nunito-Regular",
         color: isHighlight
           ? value === "Paid"
             ? "#10b981"

@@ -231,7 +231,7 @@ const HomeScreen = () => {
                 <Ionicons name="location-outline" size={16} color="#ffb000" />
                 <Text style={{
                   fontSize: 12,
-                  fontFamily: 'Poppins-Medium',
+                  fontFamily: 'Nunito-Regular',
                   color: '#ffb000',
                   marginLeft: 5,
                 }}>
@@ -242,12 +242,11 @@ const HomeScreen = () => {
               {address ? (
                 <Text style={{
                   fontSize: 10,
-                  fontFamily: 'Poppins-Light',
+                  fontFamily: 'Nunito-Light',
                   color: '#333',
                   textAlign: 'right',
                   maxWidth: '60%',
                   paddingRight: 5,
-                  // fontWeight: 'bold',
                   letterSpacing: 1,
                 }}>
                   {address?.substring(0, 35)}...
@@ -255,7 +254,7 @@ const HomeScreen = () => {
               ) : (
                 <Text style={{
                   fontSize: 10,
-                  fontFamily: 'Poppins-Light',
+                  fontFamily: 'Nunito-Light',
                   color: '#333',
                   textAlign: 'right',
                   paddingRight: 5,
@@ -271,7 +270,7 @@ const HomeScreen = () => {
         </View>
         <Text style={{
           fontSize: 22,
-          fontFamily: 'Poppins-Bold',
+          fontFamily: 'Nunito-Bold',
           marginVertical: 20,
           textAlign: 'center',
           color: '#3E4A59',
@@ -289,17 +288,17 @@ const HomeScreen = () => {
         }}>
 
           <TouchableOpacity onPress={() => { router.push('/(tabs)/home/search/setDestination') }} style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, marginBottom: 10, backgroundColor: '#fff' }}>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, fontWeight: 100, paddingHorizontal: 5 }}>Destination</Text>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>{location ? location : "Noida"}</Text>
+            <Text style={{ fontFamily: 'Nunito-Regular', fontSize: 12, fontWeight: 100, paddingHorizontal: 5 }}>Destination</Text>
+            <Text style={{ fontFamily: 'Nunito-Medium', fontSize: 14, paddingHorizontal: 5 }}>{location ? location : "Noida"}</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', flex: 1 }}>
             <TouchableOpacity onPress={() => { router.push('/(tabs)/home/search/setDates') }} style={{
               flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, paddingHorizontal: 5, marginBottom: 10, backgroundColor: '#fff', marginRight: 5
             }}>
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, fontWeight: '100', paddingHorizontal: 5 }}>
+              <Text style={{ fontFamily: 'Nunito-Regular', fontSize: 12, fontWeight: '100', paddingHorizontal: 5 }}>
                 Dates
               </Text>
-              <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5 }}>
+              <Text style={{ fontFamily: 'Nunito-Medium', fontSize: 14, paddingHorizontal: 5 }}>
                 {(checkInDate && checkOutDate) ? formatDateRange(checkInDate, checkOutDate) : "Jan 1 - Jan 2"}
               </Text>
             </TouchableOpacity>
@@ -307,12 +306,12 @@ const HomeScreen = () => {
               flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, padding: 10, paddingHorizontal: 5, marginBottom: 10, backgroundColor: '#fff', marginLeft: 5
             }}>
               <Text style={{
-                fontFamily: 'Poppins-Regular', fontSize: 12, fontWeight: '100', paddingHorizontal: 5
+                fontFamily: 'Nunito-Regular', fontSize: 12, fontWeight: '100', paddingHorizontal: 5
               }}>
                 Rooms & Guest
               </Text>
               <Text style={{
-                fontFamily: 'Poppins-Medium', fontSize: 14, paddingHorizontal: 5
+                fontFamily: 'Nunito-Medium', fontSize: 14, paddingHorizontal: 5
               }}>
                 {rooms} Room - {guests} Guest
               </Text>
@@ -321,12 +320,12 @@ const HomeScreen = () => {
 
 
           <TouchableOpacity onPress={() => { handleHotelSearch(); console.log('go to hotels') }} style={{ backgroundColor: '#ffb000', padding: 15, borderRadius: 5, alignItems: 'center' }} >
-            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Search</Text>
+            <Text style={{ color: '#fff', fontFamily: "Nunito-SemiBold", fontSize: 16 }}>Search</Text>
           </TouchableOpacity>
         </View>
 
         {/* Popular Cities */}
-        <Text style={{ fontSize: 16, fontWeight: 'bold', marginHorizontal: 15, marginTop: 20 }}>Popular Cities</Text>
+        <Text style={{ fontSize: 18, fontFamily: "Nunito-SemiBold", marginHorizontal: 15, marginTop: 20 }}>Popular Cities</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 10 }}>
           {popularCities.map((city) => (
             <TouchableOpacity onPress={() => {
@@ -342,20 +341,20 @@ const HomeScreen = () => {
                 shadowRadius: 10,
 
                }} />
-              <Text style={{ marginTop: 5, fontSize: 12, fontWeight: 'bold' }}>{city.name}</Text>
+              <Text style={{ marginTop: 5, fontSize: 14, fontFamily: "Nunito-Medium", }}>{city.name}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
 
         {/* Additional Section: Offers */}
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 15, marginTop: 20 }}>Exclusive Offers</Text>
+        <Text style={{ fontSize: 18, fontFamily: "Nunito-SemiBold", marginHorizontal: 15, marginTop: 20 }}>Exclusive Offers</Text>
         <View style={{ paddingHorizontal: 15, marginVertical: 20 }}>
           <View style={{ backgroundColor: '#ffefd5', padding: 15, borderRadius: 10, marginBottom: 10 }}>
-            <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>20% Off on First Booking!</Text>
+            <Text style={{ fontSize: 16, color: '#333', fontFamily: "Nunito-SemiBold", }}>20% Off on First Booking!</Text>
           </View>
           <View style={{ backgroundColor: '#ffefd5', padding: 15, borderRadius: 10, marginBottom: 10 }}>
-            <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>Free Breakfast in Selected Hotels</Text>
+            <Text style={{ fontSize: 16, color: '#333', fontFamily: "Nunito-SemiBold", }}>Free Breakfast in Selected Hotels</Text>
           </View>
         </View>
       </ScrollView>
@@ -385,7 +384,7 @@ const HomeScreen = () => {
             borderRadius: 16,
           }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 0 }}>
-              <Text style={{ fontSize: 18, fontFamily: 'Poppins-SemiBold', marginBottom: 20 }}>Select Room & Guests</Text>
+              <Text style={{ fontSize: 18, fontFamily: 'Nunito-SemiBold', marginBottom: 20 }}>Select Room & Guests</Text>
               <TouchableOpacity onPress={() => { setDatesModal(false) }}>
                 <Entypo name="cross" size={28} color="black" />
               </TouchableOpacity>
@@ -393,7 +392,7 @@ const HomeScreen = () => {
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
-              <Text style={{ fontSize: 14, marginRight: 10, fontFamily: 'Poppins-Regular' }}>Number of Guests:</Text>
+              <Text style={{ fontSize: 14, marginRight: 10, fontFamily: 'Nunito-Regular' }}>Number of Guests:</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity onPress={() => updateGuests(guests - 1 < 1 ? 1 : guests - 1)}>
                   <Ionicons name="remove-circle-outline" size={24} color="#ffb000" />
@@ -408,7 +407,7 @@ const HomeScreen = () => {
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
-              <Text style={{ fontSize: 14, marginRight: 10, fontFamily: 'Poppins-Regular' }}>Number of Rooms:</Text>
+              <Text style={{ fontSize: 14, marginRight: 10, fontFamily: 'Nunito-Regular' }}>Number of Rooms:</Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <TouchableOpacity onPress={() => updateRooms(rooms - 1 < 1 ? 1 : rooms - 1)}>
                   <Ionicons name="remove-circle-outline" size={24} color="#ffb000" />

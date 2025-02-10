@@ -59,7 +59,7 @@ const HotelReviews = ({ hotel, userId }: any) => {
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "bold",
+                fontFamily:"Nunito-Semibold",
                 color: hasReviewed ? "#888" : "#fff",
                 textAlign: "center",
               }}
@@ -82,7 +82,7 @@ const HotelReviews = ({ hotel, userId }: any) => {
           }}
         >
           <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
+            <Text style={{ fontSize: 16, fontFamily:"Nunito-SemiBold", color: "#333" }}>
               Your Review
             </Text>
              <Pressable 
@@ -94,17 +94,17 @@ const HotelReviews = ({ hotel, userId }: any) => {
              >
               <Text style={{
                 fontSize: 14,
-                fontWeight: "bold",
+                fontFamily:"Nunito-SemiBold",
                 color:"#ffb000",
                 textAlign: "center",
               }}>Edit</Text>
              </Pressable>
           </View>
-          <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: 4 }}>
+          <Text style={{ fontSize: 14, fontFamily:"Nunito-SemiBold", marginTop: 4 }}>
             {allReviews?.userRating?.rating} ⭐
           </Text>
 
-          <Text style={{ fontSize: 14, color: "#666", marginTop: 4 }}>
+          <Text style={{ fontSize: 14,lineHeight:20,letterSpacing:0.25, fontFamily:"Nunito-Regular", color: "#666", marginTop: 4 }}>
             {allReviews?.userRating?.feedback}
           </Text>
         </View>
@@ -126,13 +126,13 @@ const HotelReviews = ({ hotel, userId }: any) => {
                 marginBottom: 8,
               }}
             >
-              <Text style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>
+              <Text style={{ fontSize: 14, fontFamily:"Nunito-SemiBold", color: "#333" }}>
                 User ID: {item.userId}
               </Text>
-              <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: 4 }}>
+              <Text style={{ fontSize: 14, fontFamily:"Nunito-SemiBold", marginTop: 4 }}>
                 {item.rating} ⭐
               </Text>
-              <Text style={{ fontSize: 14, color: "#666", marginTop: 4 }}>
+              <Text style={{ fontSize: 14, color: "#666",lineHeight:20,letterSpacing:0.25,fontFamily:"Nunito-Regular", marginTop: 4 }}>
                 {item.feedback}
               </Text>
             </View>

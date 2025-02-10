@@ -127,7 +127,7 @@ const HotelCard = ({ hotel }: any) => {
           <Text
             style={{
               fontSize: 20,
-              fontWeight: "bold",
+              fontFamily:"Nunito-SemiBold",
               marginBottom: 5,
               color: "#333",
             }}
@@ -153,6 +153,7 @@ const HotelCard = ({ hotel }: any) => {
               style={{
                 fontSize: 14,
                 color: "#777",
+                fontFamily:"Nunito-Regular",
               }}
             >
               {hotel[0]?.hotelAddress}
@@ -175,7 +176,7 @@ const HotelCard = ({ hotel }: any) => {
                 borderRadius: 5,
               }}
             >
-              <Text style={{ fontSize: 14, color: "#ffb000" }}>
+              <Text style={{ fontSize: 14,fontFamily:"Nunito-Regular", color: "#ffb000" }}>
                 Starts From Rs.{hotel[1]?.price}/night
               </Text>
             </View>
@@ -187,7 +188,7 @@ const HotelCard = ({ hotel }: any) => {
               borderRadius: 5,
             }}
           >
-            <Text style={{ fontSize: 14, color: "#ffb000" }}>
+            <Text style={{ fontSize: 14,fontFamily:"Nunito-Regular", color: "#ffb000" }}>
               Rating: {hotel[0]?.ratings.totalRating/hotel[0]?.ratings.totalUsers} ⭐
             </Text>
           </View>:null
@@ -213,7 +214,7 @@ const HotelCard = ({ hotel }: any) => {
               style={{
                 color: "#fff",
                 fontSize: 16,
-                fontWeight: "bold",
+                fontFamily:"Nunito-SemiBold",
               }}
             >
               Book Now

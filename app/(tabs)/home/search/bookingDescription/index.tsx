@@ -48,13 +48,6 @@ const BookingDescriptionScreen = () => {
   const [descCharLimit, setDescCharLimit] = useState(100); // Start with 100 characters
   const [locationCharLimit, setLocationCharLimit] = useState(100); // Start with 100 characters
 
-  // const handlePress = () => {
-  //   if (!user?._id) {
-  //     setShowLoginModal(true); // Open modal
-  //   } else {
-  //     handleCheckAvailability(); // Proceed to book
-  //   }
-  // };
 
   const headerTranslate = scrollY.interpolate({
     inputRange: [0, imageHeight],
@@ -146,12 +139,6 @@ const BookingDescriptionScreen = () => {
     return text.length > charLimit ? text.slice(0, charLimit) : text;
   };
 
-  const showPopup = () => {
-    setIsVisible(true);
-    setTimeout(() => {
-      setIsVisible(false);
-    }, 5000); // Hide the modal after 5 seconds
-  };
 
   const closeModal = () => {
     setShowModal(false);
@@ -163,6 +150,7 @@ const BookingDescriptionScreen = () => {
       {/* Loader */}
 
       <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -208,7 +196,7 @@ const BookingDescriptionScreen = () => {
           <Text
             style={{
               fontSize: 22,
-              fontWeight: "bold",
+              fontFamily:"Nunito-SemiBold",
               color: "#333",
               marginBottom: 10,
             }}
@@ -221,7 +209,7 @@ const BookingDescriptionScreen = () => {
             style={{
               fontSize: 16,
               color: "#ffb000",
-              fontWeight: "bold",
+              fontFamily:"Nunito-SemiBold",
               marginBottom: 10,
             }}
           >
@@ -252,6 +240,9 @@ const BookingDescriptionScreen = () => {
                   color: "#555",
                   marginLeft: 8,
                   flexShrink: 1,
+                  fontFamily:"Nunito-Regular",
+                  lineHeight:20,
+                  letterSpacing:0.25,
                 }}
               >
                 {getLimitedText(hotel[0]?.hotelAddress, locationCharLimit)}
@@ -263,7 +254,7 @@ const BookingDescriptionScreen = () => {
                     style={{
                       color: "#ffb000",
                       fontSize: 14,
-                      fontWeight: "bold",
+                      fontFamily:"Nunito-SemiBold",
                     }}
                   >
                     {"  "}Show More...
@@ -275,7 +266,7 @@ const BookingDescriptionScreen = () => {
                       style={{
                         color: "#ffb000",
                         fontSize: 14,
-                        fontWeight: "bold",
+                        fontFamily:"Nunito-SemiBold",
                       }}
                     >
                       {"  "}
@@ -310,6 +301,8 @@ const BookingDescriptionScreen = () => {
                   color: "#555",
                   marginLeft: 8,
                   flexShrink: 1,
+                  lineHeight:20,
+                  letterSpacing:0.25,
                 }}
               >
                 {getLimitedText(hotel[0]?.description, descCharLimit)}
@@ -357,7 +350,7 @@ const BookingDescriptionScreen = () => {
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "bold",
+                fontFamily:"Nunito-SemiBold",
                 marginBottom: 10,
                 color: "#333",
               }}
@@ -379,7 +372,7 @@ const BookingDescriptionScreen = () => {
                     <Text
                       style={{
                         fontSize: 12,
-                        fontWeight: "bold",
+                        fontFamily:"Nunito-Regular",
                         color: "#fff",
                       }}
                     >
@@ -410,7 +403,7 @@ const BookingDescriptionScreen = () => {
           >
             <Text
               style={{
-                fontFamily: "Poppins-Medium",
+                fontFamily: "Nunito-SemiBold",
                 fontSize: 16,
                 fontWeight: "600",
                 marginBottom: 10,
@@ -451,7 +444,7 @@ const BookingDescriptionScreen = () => {
                     <Text
                       style={{
                         fontSize: 16,
-                        fontWeight: "bold",
+                        fontFamily:"Nunito-Medium",
                         color: "#333",
                         flex: 1,
                       }}
@@ -469,7 +462,7 @@ const BookingDescriptionScreen = () => {
                       <Text
                         style={{
                           fontSize: 14,
-                          fontWeight: "bold",
+                          fontFamily:"Nunito-Medium",
                           color: "#fff",
                         }}
                       >
@@ -526,7 +519,7 @@ const BookingDescriptionScreen = () => {
                   style={{
                     color: "#fff",
                     fontSize: 16,
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                   }}
                 >
                   Check Availability
@@ -572,7 +565,7 @@ const BookingDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-SemiBold",
                   marginBottom: 8,
                   color: "#333",
                 }}
@@ -587,7 +580,7 @@ const BookingDescriptionScreen = () => {
                         hotel[0]?.ratings?.totalUsers
                     : 0
                 )}
-                <Text style={{ fontSize: 16, color: "#777", marginLeft: 8 }}>
+                <Text style={{ fontSize: 16,fontFamily:"Nunito-Regular", color: "#777", marginLeft: 8 }}>
                   ({hotel[0]?.ratings?.totalUsers || 0} reviews)
                 </Text>
               </View>
@@ -625,7 +618,7 @@ const BookingDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-SemiBold",
                   marginBottom: 20,
                   textAlign: "center",
                 }}
@@ -636,7 +629,7 @@ const BookingDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-SemiBold",
                   marginBottom: 20,
                   textAlign: "center",
                 }}
@@ -648,7 +641,6 @@ const BookingDescriptionScreen = () => {
               <TouchableOpacity
                 style={{
                   backgroundColor: "#fbc000",
-
                   paddingVertical: 15,
                   paddingHorizontal: 30,
                   borderRadius: 30,
@@ -656,8 +648,6 @@ const BookingDescriptionScreen = () => {
                   marginTop: 10,
                 }}
                 onPress={() => {
-                  //   confirmBooking();
-                  // router.navigate("/(tabs)/home/search/bookingDescription/bookingPayment")
                   closeModal();
                   router.navigate({
                     pathname: "/home/search/bookingDescription/bookingPayment", // Ensure your PaymentScreen is placed in the `/app` directory
@@ -672,14 +662,14 @@ const BookingDescriptionScreen = () => {
                       price: selectedPrice * rooms,
                     },
                   });
-                  console.log("Room booking confirmed!");
+                  // console.log("Room booking confirmed!");
                 }}
               >
                 <Text
                   style={{
                     color: "#fff",
                     fontSize: 18,
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                   }}
                 >
                   Confirm Booking
@@ -696,6 +686,7 @@ const BookingDescriptionScreen = () => {
                 style={{
                   color: "#ff0000",
                   fontSize: 16,
+                  fontFamily:"Nunito-SemiBold",
                 }}
               >
                 Close

@@ -119,7 +119,7 @@ const HotelBookingScreen: React.FC = () => {
                 <Text
                     style={{
                         fontSize: 20,
-                        fontWeight: 'bold',
+                        fontFamily: "Nunito-SemiBold",
                         color: '#333',
                     }}
                 >
@@ -181,7 +181,7 @@ const HotelBookingScreen: React.FC = () => {
                         elevation: 2,
                     }}
                 >
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: selectedType === 'checkIn' ? 'white' : '#555' }}>Check-in</Text>
+                    <Text style={{ fontSize: 16, fontFamily: "Nunito-SemiBold", color: selectedType === 'checkIn' ? 'white' : '#555' }}>Check-in</Text>
                     <Text style={{ fontSize: 14, color: selectedType === 'checkIn' ? 'white' : '#333', marginTop: 4 }}>
                         {checkInDate ? formatDate(checkInDate) : 'Not selected'}
                     </Text>
@@ -200,7 +200,7 @@ const HotelBookingScreen: React.FC = () => {
                         elevation: 2,
                     }}
                 >
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: selectedType === 'checkOut' ? 'white' : '#555' }}>Check-out</Text>
+                    <Text style={{ fontSize: 16, fontFamily: "Nunito-SemiBold", color: selectedType === 'checkOut' ? 'white' : '#555' }}>Check-out</Text>
                     <Text style={{ fontSize: 14, color: selectedType === 'checkOut' ? 'white' : '#333', marginTop: 4 }}>
                         {checkOutDate ? formatDate(checkOutDate) : 'Not selected'}
                     </Text>
@@ -225,7 +225,7 @@ const HotelBookingScreen: React.FC = () => {
                 <Text
                     style={{
                         textAlign: 'center',
-                        fontFamily: 'Poppins-SemiBold',
+                        fontFamily: 'Nunito-SemiBold',
                         backgroundColor: '#ffb000',
                         color: 'white',
                         paddingVertical: 10,

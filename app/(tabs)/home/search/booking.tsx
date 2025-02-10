@@ -43,13 +43,7 @@ export default function Hotels() {
 const [isVisible, setIsVisible] = useState(false);
 const [modalMessage, setModalMessage] = useState("");
 const [isSuccess, setIsSuccess] = useState(false);
-    // console.log(checkInDate, checkOutDate)
-
-  // const closeModal = () => {
-  //   setModalVisible(false);
-  // };
-
- 
+    // console.log(checkInDate, checkOutDate) 
 
   const searchHotels = async () => {
       // console.log(location,checkInDate,checkOutDate,rooms)
@@ -98,7 +92,7 @@ const [isSuccess, setIsSuccess] = useState(false);
           }}
         >
           <ActivityIndicator size="large" color="#ffb000" />
-          <Text style={{ marginTop: 10, fontSize: 16, color: "#777" }}>
+          <Text style={{ marginTop: 10,fontFamily: "Nunito-Regular", fontSize: 16, color: "#777" }}>
             Loading Hotels...
           </Text>
         </View>
@@ -111,7 +105,7 @@ const [isSuccess, setIsSuccess] = useState(false);
 
           }}
         >
-          <Text style={{ fontSize: 20, fontFamily:"Poppins-Bold", marginBottom: 15,paddingHorizontal:5 }}>
+          <Text style={{ fontSize: 20, fontFamily: "Nunito-SemiBold", marginBottom: 15,paddingHorizontal:5 }}>
            Available Hotels 
           </Text>
         
@@ -137,7 +131,7 @@ const [isSuccess, setIsSuccess] = useState(false);
           
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <Text style={{ textAlign: "center", marginTop: 20 }}>
+            <Text style={{ textAlign: "center",fontFamily: "Nunito-Regular", marginTop: 20 }}>
               No hotels available
             </Text>
           }

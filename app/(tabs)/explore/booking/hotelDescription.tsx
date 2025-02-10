@@ -263,7 +263,9 @@ const HotelDescriptionScreen = () => {
                     fontFamily:"Nunito-Regular",
                     color: "#555",
                     marginLeft: 8,
-                    flexShrink: 1, 
+                    flexShrink: 1,
+                    lineHeight:20,
+                    letterSpacing:0.25, 
                   }}
                 >
                   {getLimitedText(hotel[0]?.hotelAddress, locationCharLimit)}
@@ -323,7 +325,9 @@ const HotelDescriptionScreen = () => {
                     color: "#555",
                     fontFamily:"Nunito-Regular",
                     marginLeft: 8,
-                    flexShrink: 1, 
+                    flexShrink: 1,
+                    lineHeight:20,
+                    letterSpacing:0.25, 
                   }}
                 >
                   {getLimitedText(hotel[0]?.description, descCharLimit)}
@@ -408,7 +412,6 @@ const HotelDescriptionScreen = () => {
             </View>
 
             {/* Room Types*/}
-
             <View
               style={{
                 padding: 15,
@@ -469,7 +472,7 @@ const HotelDescriptionScreen = () => {
                       <Text
                         style={{
                           fontSize: 16,
-                          fontWeight: "bold",
+                          fontFamily:"Nunito-Medium",
                           color: "#333",
                           flex: 1,
                         }}
@@ -487,7 +490,7 @@ const HotelDescriptionScreen = () => {
                         <Text
                           style={{
                             fontSize: 14,
-                            fontWeight: "bold",
+                            fontFamily:"Nunito-Medium",
                             color: "#fff",
                           }}
                         >
@@ -653,7 +656,7 @@ const HotelDescriptionScreen = () => {
                     style={{
                       color: "#fff",
                       fontSize: 16,
-                      fontWeight: "bold",
+                      fontFamily:"Nunito-SemiBold",
                     }}
                   >
                     Check Availability
@@ -701,7 +704,7 @@ const HotelDescriptionScreen = () => {
                 <Text
                   style={{
                     fontSize: 18,
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-SemiBold",
                     marginBottom: 8,
                     color: "#333",
                   }}
@@ -716,7 +719,7 @@ const HotelDescriptionScreen = () => {
                           hotel[0]?.ratings?.totalUsers
                       : 0
                   )}
-                  <Text style={{ fontSize: 16, color: "#777", marginLeft: 8 }}>
+                  <Text style={{ fontSize: 16,fontFamily:"Nunito-Regular", color: "#777", marginLeft: 8 }}>
                     ({hotel[0]?.ratings?.totalUsers || 0} reviews)
                   </Text>
                 </View>
@@ -755,7 +758,7 @@ const HotelDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-Medium",
                   marginBottom: 20,
                   textAlign: "center",
                 }}
@@ -766,7 +769,7 @@ const HotelDescriptionScreen = () => {
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "bold",
+                  fontFamily:"Nunito-Medium",
                   marginBottom: 20,
                   textAlign: "center",
                 }}
@@ -806,7 +809,7 @@ const HotelDescriptionScreen = () => {
                   style={{
                     color: "#fff",
                     fontSize: 18,
-                    fontWeight: "bold",
+                    fontFamily:"Nunito-Medium",
                   }}
                 >
                   Confirm Booking
@@ -823,6 +826,7 @@ const HotelDescriptionScreen = () => {
                 style={{
                   color: "#ff0000",
                   fontSize: 16,
+                  fontFamily:"Nunito-Medium",
                 }}
               >
                 Close
