@@ -38,7 +38,7 @@ const HotelReviews = ({ hotel, userId }: any) => {
   return (
     <View style={{ padding: 20 }}>
       {!hasReviewed && (
-        <View style={{ marginTop: 10, alignItems: "center" }}>
+        <View style={{ marginTop: 10, alignItems: "center", paddingBottom:10  }}>
           <Pressable
             onPress={() => setModalVisible(true)}
             disabled={hasReviewed}

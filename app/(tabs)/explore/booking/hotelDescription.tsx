@@ -681,13 +681,7 @@ const HotelDescriptionScreen = () => {
             }}
           >
             {/* Rating Section */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
+            
               <View
                 style={{
                   borderBottomWidth: 1,
@@ -726,8 +720,6 @@ const HotelDescriptionScreen = () => {
                   </Text>
                 </View>
               </View>
-            </View>
-
             <HotelReviews hotel={hotel} userId={user?._id} />
           </View>
         </Animated.ScrollView>
