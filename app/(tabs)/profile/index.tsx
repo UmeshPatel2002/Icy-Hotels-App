@@ -80,46 +80,64 @@ const UserProfile = () => {
 
     if (!result?.canceled) {
       setImage(result?.assets[0]?.uri);
-      updateProfileImage(result?.assets[0]?.uri);
+      // console.log(result,"uriiiiiii");
+      updateProfileImage(result?.assets[0]);
     }
   };
 
   const updateProfileImage = async (img: any) => {
     try {
-      setLoading(true);
-      const formData = new FormData();
-      // console.log(img)
-      if (img) {
-        formData.append("images", {
-          uri: img,
-          name: `profile_img_${Date.now()}_${Math.floor(
-            Math.random() * 100000
-          )}.jpg`,
-          type: "image/jpeg",
-        } as any);
-      }
-      formData.append("userId", user?._id);
-      // console.log("formdata",formData);
-      const res = await axios.post(
-        `${baseUrl}/users/update-user-profile`,
-        formData
-      );
-      if (res.data) {
-        // console.log("Image updated successfully",res.data);
-        setLoading(false);
+        if (!img || !img.uri) {
+            console.error("Invalid image provided.", img);
+            return;
+        }
 
-        dispatch(setUserDetails(res.data));
-        await AsyncStorage.setItem("userDetails", JSON.stringify(res.data));
-      }
+        setLoading(true);
+        const formData = new FormData();
+
+        formData.append("images", {
+            uri: img.uri,
+            name: img.fileName || `profile_${Date.now()}.jpg`,
+            type: img.mimeType || "image/jpeg",
+        });
+
+        if (!user?._id) {
+            console.error("User ID is missing.");
+            setLoading(false);
+            return;
+        }
+
+        formData.append("userId", user._id);
+
+        console.log("Uploading image...", formData);
+
+        const res = await axios.post(`${baseUrl}/users/update-user-image`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Accept: "application/json",
+            },
+        });
+
+        if (res.data) {
+            console.log("Image uploaded successfully:", res.data);
+            setLoading(false);
+            dispatch(setUserDetails(res.data));
+            await AsyncStorage.setItem("userDetails", JSON.stringify(res.data));
+        } else {
+            throw new Error("No response data received.");
+        }
     } catch (error) {
-      console.error("Error updating profile image: ", error);
-      setLoading(false);
+        console.error("Error updating profile image:", error);
+        setLoading(false);
     }
-  };
+};
+
+  
+  
+  
 
   const updateUserInfo = async (field: any, value: any) => {
     try {
-      console.log("Updating profile image", field, value);
       setLoading(true);
       const res = await axios.patch(`${baseUrl}/users/update-user-profile`, {
         userId: user?._id,
@@ -171,7 +189,9 @@ const UserProfile = () => {
                   padding: 5,
                   elevation: 5,
                 }}
-                onPress={() => pickImage()}
+                onPress={() => 
+                  pickImage()
+                }
               >
                 <Ionicons name="pencil" size={16} color="#fff" />
               </TouchableOpacity>
