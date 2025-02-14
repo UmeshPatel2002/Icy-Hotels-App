@@ -14,6 +14,7 @@ const SignupScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("Male");
+  const [location,setLocation] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,18 +22,19 @@ const SignupScreen = () => {
   const dispatch = useDispatch();
   const phoneNumber = useSelector((state: any) => state.user.phone);
   const router = useRouter();
-    const pickImage = async () => {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
 
-      if (!result?.canceled) {
-        setImage(result?.assets[0]?.uri);
-      }
-    };
+    // const pickImage = async () => {
+    //   const result = await ImagePicker.launchImageLibraryAsync({
+    //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //     allowsEditing: true,
+    //     aspect: [1, 1],
+    //     quality: 1,
+    //   });
+
+    //   if (!result?.canceled) {
+    //     setImage(result?.assets[0]?.uri);
+    //   }
+    // };
 
   const handleSignup = async () => {
     if (!name) {
@@ -111,7 +113,7 @@ const SignupScreen = () => {
         <Text style={{ marginTop: 10, fontSize: 16, color: "#333" }}>
           Upload Profile Picture
         </Text>
-      </View> */}
+            </View> */}
         <Text style={{ fontSize: 22, marginBottom: 10, fontFamily: "Poppins-Medium" }}>Create Account</Text>
 
         <Text style={{ fontSize: 16, marginVertical: 10, marginBottom: 2, fontFamily: "Poppins-Regular" }}>Name</Text>

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Modal,
   FlatList,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -591,7 +592,7 @@ const BookingDescriptionScreen = () => {
         </View>
       </Animated.ScrollView>
 
-      <Modal
+      {/* <Modal
         visible={showModal}
         transparent
         animationType="slide"
@@ -694,8 +695,131 @@ const BookingDescriptionScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-
+      </Modal> */}
+       <Modal
+              visible={showModal}
+              transparent
+              animationType="slide"
+              onRequestClose={closeModal}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#fff",
+                    padding: 20,
+                    borderRadius: 20,
+                    alignItems: "center",
+                    width: "85%",
+                    shadowColor: "#000",
+                    shadowOpacity: 0.2,
+                    shadowRadius: 10,
+                    elevation: 5,
+                  }}
+                >
+                  <Image
+                    source={require('../../../../../assets/images/icon.png')}
+                    style={{
+                      width: 80,
+                      height: 80,
+                      marginBottom: 15,
+                    }}
+                    resizeMode="cover"
+                  />
+      
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontFamily: "Nunito-Medium",
+                      marginBottom: 20,
+                      textAlign: "center",
+                    }}
+                  >
+                    {isAvailable
+                      ? "Room is available! Confirm your booking?"
+                      : "Room is not available."}
+                  </Text>
+      
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      marginTop: 10,
+                      gap:10,
+                    }}
+                  >
+      
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        backgroundColor: "#ff4d4d",
+                        paddingVertical: 12,
+                        borderRadius: 30,
+                        alignItems: "center",
+                      }}
+                      onPress={closeModal}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontSize: 16,
+                          fontFamily: "Nunito-Medium",
+                        }}
+                      >
+                        Close
+                      </Text>
+                    </TouchableOpacity>
+      
+                    {isAvailable && (
+                      <TouchableOpacity
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#fbc000",
+                          paddingVertical: 12,
+                          borderRadius: 30,
+                          alignItems: "center",
+                          marginRight: 10,
+                        }}
+                        onPress={() => {
+                          closeModal();
+                          router.navigate({
+                            pathname: "/(tabs)/home/search/bookingDescription/bookingPay",
+                            params: {
+                              hotelId: hotel[0]._id,
+                              hotelName: hotel[0].name,
+                              hotelImg: hotel[0].images[0],
+                              roomType: selectedRoomType,
+                              checkInDate,
+                              checkOutDate,
+                              numRooms: rooms,
+                              price: selectedPrice * rooms,
+                            },
+                          });
+                          console.log("Room booking confirmed!");
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontSize: 16,
+                            fontFamily: "Nunito-Medium",
+                          }}
+                        >
+                          Confirm
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              </View>
+            </Modal>
       {/* <Modal visible={isVisible} transparent animationType="slide">
         <View
           style={{

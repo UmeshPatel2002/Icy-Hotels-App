@@ -36,22 +36,19 @@ const PaymentScreen = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { width, height } = Dimensions.get("window");
   const [isPayNow, setIsPayNow] = useState(false);
+  const [isPayatHotel, setIsPayatHotel] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [isAvailable, setIsAvailable] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isPayatHotel,setIsPayatHotel] = useState(false);
-
 
   const handlePress = () => {
     if (!user?._id) {
-      setShowLoginModal(true);
+      setShowLoginModal(true); // Open modal
     } else {
-      confirmBooking();
+      confirmBooking(); // Proceed to book
     }
   };
 
   const handleCheckAvailability = async () => {
-    
     try {
       const res = await axios.get(`${baseUrl}/hotels/confirm-availability`, {
         params: {
@@ -85,7 +82,7 @@ const PaymentScreen = () => {
   const confirmBooking = async () => {
     setLoading(true);
     const availability = await handleCheckAvailability();
-    if (!availability){
+    if (!availability) {
       setIsPayNow(false);
       setIsPayatHotel(false);
       return;
@@ -100,9 +97,9 @@ const PaymentScreen = () => {
         checkOutDate,
         totalRooms: numRooms,
         status: "Confirmed",
-        paymentStatus: isPayNow?"Paid":"Pending",
+        paymentStatus: isPayNow ? "Paid" : "Pending",
         transactionId: "xyz",
-        totalPrice: isPayNow?((Number(price) ?? 0) * 0.95).toFixed(2):price,
+        totalPrice: isPayNow ? ((Number(price) ?? 0) * 0.95).toFixed(2) : price,
       });
 
       if (res.data) {
@@ -118,23 +115,21 @@ const PaymentScreen = () => {
       }
     } catch (error) {
       console.error("Error booking hotel:", error);
-      setIsPayNow(false)
-      setIsPayatHotel(false);;
+      setIsPayNow(false);
+      setIsPayatHotel(false);
       setIsSuccess(false);
       showPopup();
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   const showPopup = () => {
     setIsVisible(true);
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       setIsVisible(false);
       router.back();
-    }, 4000);
-    return () => clearTimeout(timeout);
+    }, 4000); // Hide the modal after 5 seconds
   };
 
   return (
@@ -266,7 +261,7 @@ const PaymentScreen = () => {
                 }}
               >
                 <Text>Hotel: </Text>
-                {hotelName}
+                {hotelName || ""}
               </Text>
             </View>
 
@@ -306,7 +301,7 @@ const PaymentScreen = () => {
                 >
                   Room Type:{" "}
                 </Text>
-                {roomType}
+                {roomType || ""}
               </Text>
             </View>
 
@@ -344,7 +339,7 @@ const PaymentScreen = () => {
                 <Text style={{ fontFamily: "Nunito-SemiBold" }}>
                   Check-In:{" "}
                 </Text>
-                {checkInDate}
+                {checkInDate || ""}
               </Text>
             </View>
 
@@ -382,7 +377,7 @@ const PaymentScreen = () => {
                 <Text style={{ fontFamily: "Nunito-SemiBold" }}>
                   Check-Out:{" "}
                 </Text>
-                {checkOutDate}
+                {checkOutDate || ""}
               </Text>
             </View>
 
@@ -419,7 +414,7 @@ const PaymentScreen = () => {
                 }}
               >
                 <Text style={{ fontFamily: "Nunito-SemiBold" }}>Rooms: </Text>
-                {numRooms}
+                {numRooms || 0}
               </Text>
             </View>
           </View>
@@ -436,7 +431,7 @@ const PaymentScreen = () => {
             >
               {isSuccess && (
                 <LottieView
-                  source={require("../../../../assets/lottie/success.json")}
+                  source={require("../../../../../assets/lottie/success.json")}
                   autoPlay
                   loop
                   style={{ width: width, height: height }} // Adjust size
@@ -444,7 +439,7 @@ const PaymentScreen = () => {
               )}
               {isSuccess === false && (
                 <LottieView
-                  source={require("../../../../assets/lottie/failure.json")}
+                  source={require("../../../../../assets/lottie/failure.json")}
                   autoPlay
                   loop
                   style={{ width: width, height: height }} // Adjust size
@@ -639,12 +634,12 @@ const PaymentScreen = () => {
                 justifyContent: "center",
               }}
               onPress={() => {
-                setIsPayatHotel(true)
+                setIsPayatHotel(true);
                 handlePress();
               }}
               disabled={loading}
             >
-              { isPayatHotel? (
+              {isPayatHotel ? (
                 <ActivityIndicator size={36} color="#fbb000" />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -701,7 +696,7 @@ const PaymentScreen = () => {
               disabled={loading}
               activeOpacity={0.7}
             >
-              {isPayNow? (
+              {isPayNow ? (
                 <ActivityIndicator color="green" size={36} />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -741,7 +736,7 @@ const PaymentScreen = () => {
                         fontFamily: "Nunito-Bold",
                       }}
                     >
-                      ₹{(Number(price) * 0.95).toFixed(2)}
+                      ₹{((Number(price)) * 0.95).toFixed(2)}
                     </Text>
                   </View>
                 </View>
@@ -750,7 +745,6 @@ const PaymentScreen = () => {
           </View>
           
         </View>
-        
       </View>
     </SafeAreaView>
   );

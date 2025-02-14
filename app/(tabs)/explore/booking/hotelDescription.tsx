@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Modal,
   FlatList,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -724,112 +725,7 @@ const HotelDescriptionScreen = () => {
           </View>
         </Animated.ScrollView>
       )}
-
       <Modal
-        visible={showModal}
-        transparent
-        animationType="slide"
-        onRequestClose={closeModal}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "#fff",
-              padding: 20,
-              borderRadius: 20,
-              alignItems: "center",
-              width: "80%",
-            }}
-          >
-            {isAvailable ? (
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontFamily: "Nunito-Medium",
-                  marginBottom: 20,
-                  textAlign: "center",
-                }}
-              >
-                Room is available! Confirm your booking?
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontFamily: "Nunito-Medium",
-                  marginBottom: 20,
-                  textAlign: "center",
-                }}
-              >
-                Room is not available.
-              </Text>
-            )}
-            {isAvailable && (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#fbc000",
-                  paddingVertical: 15,
-                  paddingHorizontal: 30,
-                  borderRadius: 30,
-                  alignItems: "center",
-                  marginTop: 10,
-                }}
-                onPress={() => {
-                  closeModal();
-                  router.navigate({
-                    pathname: "/(tabs)/explore/booking/bookingPayment", // Ensure your PaymentScreen is placed in the `/app` directory
-                    params: {
-                      hotelId: hotel[0]._id,
-                      hotelName: hotel[0].name,
-                      hotelImg: hotel[0].images[0],
-                      roomType: selectedRoomType,
-                      checkInDate,
-                      checkOutDate,
-                      numRooms: rooms,
-                      price: selectedPrice * rooms,
-                    },
-                  });
-                  console.log("Room booking confirmed!");
-                }}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: 18,
-                    fontFamily: "Nunito-Medium",
-                  }}
-                >
-                  Confirm Booking
-                </Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              style={{
-                marginTop: 20,
-              }}
-              onPress={closeModal}
-            >
-              <Text
-                style={{
-                  color: "#ff0000",
-                  fontSize: 16,
-                  fontFamily: "Nunito-Medium",
-                }}
-              >
-                Close
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      {/* <Modal
         visible={showModal}
         transparent
         animationType="slide"
@@ -857,11 +753,10 @@ const HotelDescriptionScreen = () => {
             }}
           >
             <Image
-              source={{ uri: hotel[0]?.images[0] }}
+              source={require('../../../../assets/images/icon.png')}
               style={{
                 width: 80,
                 height: 80,
-                borderRadius: 40,
                 marginBottom: 15,
               }}
               resizeMode="cover"
@@ -886,8 +781,31 @@ const HotelDescriptionScreen = () => {
                 justifyContent: "space-between",
                 width: "100%",
                 marginTop: 10,
+                gap:10,
               }}
             >
+
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  backgroundColor: "#ff4d4d",
+                  paddingVertical: 12,
+                  borderRadius: 30,
+                  alignItems: "center",
+                }}
+                onPress={closeModal}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontSize: 16,
+                    fontFamily: "Nunito-Medium",
+                  }}
+                >
+                  Close
+                </Text>
+              </TouchableOpacity>
+
               {isAvailable && (
                 <TouchableOpacity
                   style={{
@@ -927,31 +845,10 @@ const HotelDescriptionScreen = () => {
                   </Text>
                 </TouchableOpacity>
               )}
-
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: "#ff4d4d",
-                  paddingVertical: 12,
-                  borderRadius: 30,
-                  alignItems: "center",
-                }}
-                onPress={closeModal}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: 16,
-                    fontFamily: "Nunito-Medium",
-                  }}
-                >
-                  Close
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
 
       <Modal
         visible={datesModal}

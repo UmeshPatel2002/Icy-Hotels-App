@@ -20,6 +20,7 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { baseUrl } from "@/constants/server";
 
+
 const UserProfile = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ const UserProfile = () => {
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [location, setLocation] = useState(user?.address || "");
+  // const [location, setLocation] = useState(user?.address || "");
   const [email, setEmail] = useState(user?.email || "");
   const [editingEmailField, setEditingEmailField] = useState(false);
 
@@ -94,12 +95,13 @@ const UserProfile = () => {
 
         setLoading(true);
         const formData = new FormData();
-
+        if(img){
         formData.append("images", {
-            uri: img.uri,
-            name: img.fileName || `profile_${Date.now()}.jpg`,
-            type: img.mimeType || "image/jpeg",
+            uri: img?.uri,
+            name: img?.fileName || `profile_${Date.now()}.jpg`,
+            type: img?.mimeType || "image/jpeg",
         });
+      }
 
         if (!user?._id) {
             console.error("User ID is missing.");
@@ -224,7 +226,7 @@ const UserProfile = () => {
             <Text
               style={{ marginLeft: 10, fontSize: 16,fontFamily:"Nunito-Regular", color: "#333", flex: 1 }}
             >
-              {user?.address || "XYZ, INDIA"}
+              {user?.loaction || "XYZ, INDIA"}
             </Text>
           </View>
 

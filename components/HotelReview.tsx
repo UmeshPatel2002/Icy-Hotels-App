@@ -31,7 +31,7 @@ const HotelReviews = ({ hotel, userId }: any) => {
     }
   };
 
-  const hasReviewed = allReviews?.userRating?.userId === userId;
+  const hasReviewed = allReviews?.userRating?.userId?._id === userId;
 
   //   console.log(allReviews,"All reviews");
 
@@ -127,13 +127,13 @@ const HotelReviews = ({ hotel, userId }: any) => {
               }}
             >
               <Text style={{ fontSize: 14, fontFamily:"Nunito-SemiBold", color: "#333" }}>
-                User ID: {item.userId}
+                 {item?.userId?.name}
               </Text>
               <Text style={{ fontSize: 14, fontFamily:"Nunito-SemiBold", marginTop: 4 }}>
-                {item.rating} ⭐
+                {item?.rating} ⭐
               </Text>
               <Text style={{ fontSize: 14, color: "#666",lineHeight:20,letterSpacing:0.25,fontFamily:"Nunito-Regular", marginTop: 4 }}>
-                {item.feedback}
+                {item?.feedback}
               </Text>
             </View>
           )}
