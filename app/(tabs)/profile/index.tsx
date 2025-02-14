@@ -20,7 +20,6 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { baseUrl } from "@/constants/server";
 
-
 const UserProfile = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -30,9 +29,12 @@ const UserProfile = () => {
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const [location, setLocation] = useState(user?.address || "");
+  const [location, setLocation] = useState(user?.address || "");
   const [email, setEmail] = useState(user?.email || "");
+  const [gender, setGender] = useState(user?.gender || "Male");
   const [editingEmailField, setEditingEmailField] = useState(false);
+  const [editingLocationField, setEditingLocationField] = useState(false);
+  const [editingGenderField, setEditingGenderField] = useState(false);
 
   useEffect(() => {
     dispatch(setPhone(""));
@@ -88,55 +90,55 @@ const UserProfile = () => {
 
   const updateProfileImage = async (img: any) => {
     try {
-        if (!img || !img.uri) {
-            console.error("Invalid image provided.", img);
-            return;
-        }
+      if (!img || !img.uri) {
+        console.error("Invalid image provided.", img);
+        return;
+      }
 
-        setLoading(true);
-        const formData = new FormData();
-        if(img){
+      setLoading(true);
+      const formData = new FormData();
+      if (img) {
         formData.append("images", {
-            uri: img?.uri,
-            name: img?.fileName || `profile_${Date.now()}.jpg`,
-            type: img?.mimeType || "image/jpeg",
+          uri: img?.uri,
+          name: img?.fileName || `profile_${Date.now()}.jpg`,
+          type: img?.mimeType || "image/jpeg",
         });
       }
 
-        if (!user?._id) {
-            console.error("User ID is missing.");
-            setLoading(false);
-            return;
-        }
-
-        formData.append("userId", user._id);
-
-        console.log("Uploading image...", formData);
-
-        const res = await axios.post(`${baseUrl}/users/update-user-image`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                Accept: "application/json",
-            },
-        });
-
-        if (res.data) {
-            console.log("Image uploaded successfully:", res.data);
-            setLoading(false);
-            dispatch(setUserDetails(res.data));
-            await AsyncStorage.setItem("userDetails", JSON.stringify(res.data));
-        } else {
-            throw new Error("No response data received.");
-        }
-    } catch (error) {
-        console.error("Error updating profile image:", error);
+      if (!user?._id) {
+        console.error("User ID is missing.");
         setLoading(false);
-    }
-};
+        return;
+      }
 
-  
-  
-  
+      formData.append("userId", user._id);
+
+      console.log("Uploading image...", formData);
+
+      const res = await axios.post(
+        `${baseUrl}/users/update-user-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (res.data) {
+        console.log("Image uploaded successfully:", res.data);
+        setLoading(false);
+        dispatch(setUserDetails(res.data));
+        await AsyncStorage.setItem("userDetails", JSON.stringify(res.data));
+      } else {
+        throw new Error("No response data received.");
+      }
+    } catch (error) {
+      console.error("Error updating profile image:", error);
+      setLoading(false);
+    }
+  };
 
   const updateUserInfo = async (field: any, value: any) => {
     try {
@@ -150,10 +152,12 @@ const UserProfile = () => {
         dispatch(setUserDetails(res.data));
         await AsyncStorage.setItem("userDetails", JSON.stringify(res.data));
       }
-      setEditingEmailField(false);
     } catch (error) {
       console.error("Error updating user info: ", error);
     } finally {
+      setEditingEmailField(false);
+      setEditingLocationField(false);
+      setEditingGenderField(false);
       setLoading(false);
     }
   };
@@ -191,18 +195,28 @@ const UserProfile = () => {
                   padding: 5,
                   elevation: 5,
                 }}
-                onPress={() => 
-                  pickImage()
-                }
+                onPress={() => pickImage()}
               >
                 <Ionicons name="pencil" size={16} color="#fff" />
               </TouchableOpacity>
             )}
           </View>
-          <Text style={{ fontSize: 20, fontFamily:"Nunito-SemiBold", marginTop: 10 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: "Nunito-SemiBold",
+              marginTop: 10,
+            }}
+          >
             {user?.name ? `${user?.name}` : "User"}
           </Text>
-          <Text style={{ fontSize: 14,fontFamily:"Nunito-Regular", color: "#666" }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: "Nunito-Regular",
+              color: "#666",
+            }}
+          >
             {user?.phoneNumber ? `${user?.phoneNumber}` : "+91XXXXXXXXXX"}
           </Text>
         </View>
@@ -210,7 +224,7 @@ const UserProfile = () => {
         {/* Profile Details Section */}
         <View style={{ margin: 20 }}>
           {/* Address */}
-          <View
+          <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -220,18 +234,18 @@ const UserProfile = () => {
               marginBottom: 10,
               elevation: 2,
             }}
+            onPress={() => setEditingLocationField(true)}
           >
             <Ionicons name="location-outline" size={20} color="#666" />
-
             <Text
-              style={{ marginLeft: 10, fontSize: 16,fontFamily:"Nunito-Regular", color: "#333", flex: 1 }}
+              style={{ marginLeft: 10, fontSize: 16, color: "#333", flex: 1 }}
             >
-              {user?.loaction || "XYZ, INDIA"}
+              {user?.location || "XYZ, INDIA"}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           {/* Email */}
-          <View
+          <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -241,99 +255,23 @@ const UserProfile = () => {
               marginBottom: 10,
               elevation: 2,
             }}
+            onPress={() => setEditingEmailField(true)}
           >
             <Ionicons name="mail-outline" size={20} color="#666" />
-            <View
+            <Text
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "90%",
-                alignItems: "center",
-                gap: 10,
+                marginLeft: 10,
+                fontSize: 16,
+                fontFamily: "Nunito-Regular",
+                color: "#333",
               }}
             >
-              {user ? ( // Only allow email editing if user exists
-                editingEmailField ? (
-                  <TextInput
-                    style={{
-                      marginLeft: 10,
-                      fontSize: 16,
-                      color: "#333",
-                      flex: 1,
-                    }}
-                    value={email}
-                    onChangeText={setEmail}
-                    editable={true}
-                  />
-                ) : (
-                  <ScrollView
-                    horizontal
-                    style={{ width: "70%", marginLeft: 10 }}
-                  >
-                    <Text
-                      style={{ width: "100%", fontSize: 16,fontFamily:"Nunito-Regular", color: "#333" }}
-                    >
-                      {user.email || "abc@gmail.com"}
-                    </Text>
-                  </ScrollView>
-                )
-              ) : (
-                <Text style={{ fontSize: 16, color: "#333" ,fontFamily:"Nunito-Regular", marginLeft: 10 }}>
-                  abc@gmail.com
-                </Text>
-              )}
-
-              {/* Show Edit button only if user exists */}
-              {user && (
-                <>
-                  {editingEmailField ? (
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#28a745", // Green color
-                        borderRadius: 10,
-                        paddingVertical: 5,
-                        paddingHorizontal: 10,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 5,
-                        elevation: 5,
-                        justifyContent: "center",
-                      }}
-                      onPress={() => updateUserInfo("email", email)}
-                    >
-                      <Ionicons name="checkmark" size={16} color="#fff" />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#ffb000",
-                        borderRadius: 10,
-                        paddingVertical: 5,
-                        paddingHorizontal: 10,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 5,
-                        elevation: 5,
-                        justifyContent: "center",
-                      }}
-                      onPress={() => setEditingEmailField(true)}
-                    >
-                      <Ionicons name="pencil" size={16} color="#fff" />
-                    </TouchableOpacity>
-                  )}
-                </>
-              )}
-            </View>
-          </View>
+              {user.email || "abc@gmail.com"}
+            </Text>
+          </TouchableOpacity>
 
           {/* Gender */}
-          <View
+          <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -342,12 +280,20 @@ const UserProfile = () => {
               borderRadius: 10,
               elevation: 2,
             }}
+            onPress={() => setEditingGenderField(true)}
           >
             <Ionicons name="happy-outline" size={20} color="#666" />
-            <Text style={{ marginLeft: 10, fontSize: 16,fontFamily:"Nunito-Regular", color: "#333" }}>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                fontFamily: "Nunito-Regular",
+                color: "#333",
+              }}
+            >
               {user?.gender ? user?.gender : "Male"}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           {/* History Button */}
           {user && (
@@ -377,7 +323,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontFamily:"Nunito-SemiBold",
+                    fontFamily: "Nunito-SemiBold",
                   }}
                 >
                   My Bookings
@@ -405,7 +351,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontFamily:"Nunito-SemiBold",
+                    fontFamily: "Nunito-SemiBold",
                   }}
                 >
                   Logout
@@ -432,7 +378,13 @@ const UserProfile = () => {
                 >
                   Welcome!
                 </Text>
-                <Text style={{ fontSize: 14,fontFamily:"Nunito-SemiBold", textAlign: "center" }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: "Nunito-SemiBold",
+                    textAlign: "center",
+                  }}
+                >
                   Please signup / login
                 </Text>
               </View>
@@ -457,7 +409,7 @@ const UserProfile = () => {
                     marginLeft: 10,
                     fontSize: 16,
                     color: "#fff",
-                    fontFamily:"Nunito-SemiBold",
+                    fontFamily: "Nunito-SemiBold",
                   }}
                 >
                   SignUp / Login
@@ -471,10 +423,20 @@ const UserProfile = () => {
         <View
           style={{ alignItems: "center", marginTop: "auto", marginBottom: 20 }}
         >
-          <Text style={{ fontSize: 16, fontFamily:"Nunito-Italic", color: "#666" }}>
+          <Text
+            style={{ fontSize: 16, fontFamily: "Nunito-Italic", color: "#666" }}
+          >
             Icy Hotels
           </Text>
-          <Text style={{ fontSize: 12,fontFamily:"Nunito-Regular", color: "#999" }}>Connect with us</Text>
+          <Text
+            style={{
+              fontSize: 12,
+              fontFamily: "Nunito-Regular",
+              color: "#999",
+            }}
+          >
+            Connect with us
+          </Text>
         </View>
       </ScrollView>
       <Modal
@@ -521,6 +483,371 @@ const UserProfile = () => {
                 }}
                 color="red"
               />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        transparent={true}
+        visible={editingLocationField}
+        animationType="slide"
+        onRequestClose={() => setEditingLocationField(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              width: "100%",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -3 },
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+            }}
+          >
+            {/* Header Line */}
+            <View
+              style={{
+                width: 50,
+                height: 5,
+                backgroundColor: "#ccc",
+                borderRadius: 10,
+                marginBottom: 15,
+              }}
+            />
+
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: "Nunito-Bold",
+                marginBottom: 10,
+              }}
+            >
+              Enter Location
+            </Text>
+
+            {/* Input Field */}
+            <TextInput
+              style={{
+                width: "100%",
+                padding: 12,
+                borderBottomWidth: 1,
+                borderColor: "#ccc",
+                fontSize: 16,
+                fontFamily: "Nunito-Regular",
+                marginBottom: 20,
+              }}
+              placeholder="Enter your location"
+              value={location}
+              onChangeText={setLocation}
+            />
+
+            {/* Buttons */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#E0E0E0",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => setEditingLocationField(false)}
+              >
+                <Text
+                  style={{ color: "#333", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#fbb000",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => updateUserInfo("location", location)}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={editingEmailField}
+        animationType="slide"
+        onRequestClose={() => setEditingEmailField(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              width: "100%",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -3 },
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+            }}
+          >
+            {/* Header Line */}
+            <View
+              style={{
+                width: 50,
+                height: 5,
+                backgroundColor: "#ccc",
+                borderRadius: 10,
+                marginBottom: 15,
+              }}
+            />
+
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: "Nunito-Bold",
+                marginBottom: 10,
+              }}
+            >
+              Enter Email
+            </Text>
+
+            {/* Input Field */}
+            <TextInput
+              style={{
+                width: "100%",
+                padding: 12,
+                borderBottomWidth: 1,
+                borderColor: "#ccc",
+                fontSize: 16,
+                fontFamily: "Nunito-Regular",
+                marginBottom: 20,
+              }}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            {/* Buttons */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#E0E0E0",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => setEditingEmailField(false)}
+              >
+                <Text
+                  style={{ color: "#333", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#fbb000",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => updateUserInfo("email", email)}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={editingGenderField}
+        animationType="slide"
+        onRequestClose={() => setEditingGenderField(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              width: "100%",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -3 },
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+            }}
+          >
+            {/* Header Drag Indicator */}
+            <View
+              style={{
+                width: 50,
+                height: 5,
+                backgroundColor: "#ccc",
+                borderRadius: 10,
+                marginBottom: 15,
+              }}
+            />
+
+            {/* Title */}
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: "Nunito-Bold",
+                marginBottom: 10,
+              }}
+            >
+              Select Your Gender
+            </Text>
+
+            {/* Gender Selection */}
+            <View style={{ width: "100%", marginBottom: 20 }}>
+              {["Male", "Female", "Other"].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingVertical: 12,
+                    borderBottomWidth: 1,
+                    borderColor: "#ddd",
+                  }}
+                  onPress={() => setGender(option)}
+                >
+                  <View
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
+                      borderWidth: 2,
+                      borderColor: gender === option ? "#fbb000" : "#aaa",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginRight: 10,
+                    }}
+                  >
+                    {gender === option && (
+                      <View
+                        style={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: 6,
+                          backgroundColor: "#fbb000",
+                        }}
+                      />
+                    )}
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: "Nunito-Regular",
+                      color: "#333",
+                    }}
+                  >
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Buttons */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              {/* Cancel Button */}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#E0E0E0",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => setEditingGenderField(false)}
+              >
+                <Text
+                  style={{ color: "#333", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+
+              {/* Save Button */}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#fbb000",
+                  padding: 12,
+                  borderRadius: 30,
+                  width: "45%",
+                  alignItems: "center",
+                }}
+                onPress={() => updateUserInfo("gender", gender)}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
