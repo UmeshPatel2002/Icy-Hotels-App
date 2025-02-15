@@ -87,6 +87,7 @@ const PaymentScreen = () => {
     const availability = await handleCheckAvailability();
     if (!availability){
       setIsPayNow(false);
+      setLoading(false);
       setIsPayatHotel(false);
       return;
     }
@@ -125,6 +126,8 @@ const PaymentScreen = () => {
     }
     finally {
       setLoading(false);
+      setIsPayNow(false)
+      setIsPayatHotel(false);
     }
   };
 

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const index = () => {
 
     const { width, height } = Dimensions.get('window');
-    const [optScreen, setOtpScreen] = useState(false);
+    const [otpScreen, setOtpScreen] = useState(false);
     const [confirm, setConfirm] = useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
     const [code, setCode] = useState<string>('');
     const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -62,6 +62,8 @@ const dispatch=useDispatch();
             
         } catch (error) {
             console.log("error in verifying",error)
+        }finally{
+            setOtpScreen(false)
         }
     }
 
@@ -118,7 +120,7 @@ const dispatch=useDispatch();
             </ScrollView>
 
             {/* Mobile number card */}
-            {!optScreen && <View
+            {!otpScreen && <View
                 style={{
                     paddingHorizontal: 30,
                     borderTopColor: '#7c7c7c',
@@ -229,7 +231,7 @@ const dispatch=useDispatch();
 
 
             {/* otp filling card */}
-            {optScreen && <View
+            {otpScreen && <View
                 style={{
                     paddingHorizontal: 30,
                     borderTopColor: '#7c7c7c',

@@ -266,7 +266,7 @@ const UserProfile = () => {
                 color: "#333",
               }}
             >
-              {user.email || "abc@gmail.com"}
+              {user?.email || "abc@gmail.com"}
             </Text>
           </TouchableOpacity>
 
