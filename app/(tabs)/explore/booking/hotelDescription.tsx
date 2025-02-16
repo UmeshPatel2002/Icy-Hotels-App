@@ -36,7 +36,7 @@ const HotelDescriptionScreen = () => {
   const checkInDate = useSelector((state: any) => state.hotel.checkInDate);
   const checkOutDate = useSelector((state: any) => state.hotel.checkOutDate);
   const user = useSelector((state: any) => state.user.userDetails);
-  // console.log("explore desc", checkInDate, checkOutDate, user, hotel[0]?._id);
+  // console.log("explore desc",hotel);
   const [isVisible, setIsVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);

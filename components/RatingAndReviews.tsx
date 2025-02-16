@@ -11,6 +11,7 @@ const RatingAndReviews = ({
   onClose,
   hotel,
   userId,
+  allReviews,
   setAllReviews,
   isEditmode,
   existingReview,
@@ -25,6 +26,9 @@ const RatingAndReviews = ({
       setFeedback(existingReview.feedback);
     }
   }, [existingReview, isEditmode]);
+
+  
+  
 
   const handleSubmit = async () => {
     if (!rating || !feedback) {
@@ -44,14 +48,20 @@ const RatingAndReviews = ({
       };
       const response = isEditmode
         ? await axios.patch(baseUri, {...reqData,ratingId:existingReview?._id })
-        : await axios.post(baseUri, { reqData });
+        : await axios.post(baseUri,reqData );
 
       //   console.log("Response:", response); // Log response from API
-      setAllReviews((review: any) => ({
-        ...review, 
-        userRating: response.data, 
-      }));
+      // setAllReviews((review: any) => ({
+      //   ...review, 
+      //   userRating: response.data, 
+      // }));
+      console.log("Before update:", allReviews);
 
+      setAllReviews(response.data);
+      
+
+      
+      console.log(allReviews,"Response");
       //   console.log(hotel);
 
       alert("Review submitted successfully!");
@@ -60,14 +70,14 @@ const RatingAndReviews = ({
       const updatedHotel = hotel.map((item: any, index: any) => {
         if (index !== 0) return item;
     
-        const existingRating = existingReview?.rating || 0; 
-        const totalUsers = isEditmode ? item.ratings?.totalUsers : (item.ratings?.totalUsers || 0) + 1;
-    
+        const existingRating = response.data?.rating || 0; 
+        const totalUsers = isEditmode ? item.ratings?.totalUsers : (item?.ratings?.totalUsers || 0) + 1;
+        console.log("total",totalUsers,existingRating,item.ratings?.totalRating)
         return {
           ...item,
           ratings: {
             ...item.ratings,
-            totalRating: (item.ratings?.totalRating || 0) - existingRating + rating, 
+            totalRating: (item.ratings?.totalRating) - existingRating + rating, 
             totalUsers,
           },
         };
@@ -75,7 +85,7 @@ const RatingAndReviews = ({
     
 
       // Dispatch the updated hotel state
-      dispatch(setSelectedHotel(updatedHotel));
+      dispatch(setSelectedHotel([...updatedHotel]));
 
       // console.log("after updating",hotel);
 

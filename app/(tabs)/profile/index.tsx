@@ -115,7 +115,7 @@ const UserProfile = () => {
 
       console.log("Uploading image...", formData);
 
-      const res = await axios.post(
+      const res = await axios.patch(
         `${baseUrl}/users/update-user-image`,
         formData,
         {

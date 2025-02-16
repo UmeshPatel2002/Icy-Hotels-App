@@ -14,15 +14,21 @@ import axios from "axios";
 const HotelReviews = ({ hotel, userId }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isReviewEditable, setIsReviewEditable] = useState(false);
-  const [allReviews, setAllReviews] = useState({
-    allRatings: [],
-    userRating: null,
+  const [allReviews, setAllReviews] = useState<{ 
+    allRatings: any[]; 
+    userRating: any | null; 
+  }>({
+    allRatings: [], 
+    userRating: {}
   });
+  const [hasReviewed,setHasReviewed]=useState(false);
+  
   //   console.log('Hotel Data:', hotel);
 
   useEffect(() => {
     fetchRatings();
   }, [userId]);
+  
 
   const fetchRatings = async () => {
     try {
@@ -38,9 +44,25 @@ const HotelReviews = ({ hotel, userId }: any) => {
     }
   };
 
-  const hasReviewed = allReviews?.userRating?.userId?._id === userId;
+  const handleReviewUpdate = async (newReview: any) => {
+    setAllReviews((prev) => ({
+      ...prev,
+      userRating: newReview,
+    }));
+    
+    await fetchRatings(); // Ensure the UI gets the latest data
+  };
+  
+  
+
 
   //   console.log(allReviews,"All reviews");
+  useEffect(() => {
+    console.log("Updated allReviews:", allReviews);
+
+  setHasReviewed(allReviews?.userRating?.userId?._id === userId);
+
+  }, [allReviews]);
 
   return (
     <View style={{ padding: 20 }}>
@@ -79,7 +101,7 @@ const HotelReviews = ({ hotel, userId }: any) => {
         </View>
       )}
 
-      {userId && hasReviewed && allReviews?.userRating && (
+      {userId && allReviews?.userRating?.userId?._id === userId && (
         <View
           style={{
             padding: 12,
@@ -216,7 +238,8 @@ const HotelReviews = ({ hotel, userId }: any) => {
         }}
         hotel={hotel}
         userId={userId}
-        setAllReviews={setAllReviews}
+        allReviews={allReviews}
+        setAllReviews={handleReviewUpdate}
         isEditmode={isReviewEditable}
         existingReview={allReviews?.userRating}
       />
