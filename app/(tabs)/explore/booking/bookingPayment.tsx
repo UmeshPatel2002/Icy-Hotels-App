@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import RazorpayCheckout from "react-native-razorpay";
 
 const PaymentScreen = () => {
   const router = useRouter();
@@ -39,8 +40,7 @@ const PaymentScreen = () => {
   const [loading, setLoading] = useState(false);
   // const [isAvailable, setIsAvailable] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isPayatHotel,setIsPayatHotel] = useState(false);
-
+  const [isPayatHotel, setIsPayatHotel] = useState(false);
 
   const handlePress = () => {
     if (!user?._id) {
@@ -50,8 +50,76 @@ const PaymentScreen = () => {
     }
   };
 
+  const PayNow = async () => {
+    const username = "rzp_live_oz8kr6Ix29mKyC";
+    const password = "IADDTICFJ2oXYLX3H2pLjvcx";
+    const credentials = `${username}:${password}`;
+    const encodedCredentials = btoa(credentials);
+    console.log(
+      "8**********",
+      username,
+      password,
+      credentials,
+      encodedCredentials
+    );
+    try {
+      const response = await axios.post(
+        "https://api.razorpay.com/v1/orders",
+        {
+          amount: 500,
+          currency: "INR",
+          receipt: "userDetails._id",
+          notes: {
+            notes_key_1: "Welcome to CulturTap-Genie",
+            notes_key_2: "Eat-Sleep-Code-Repeat.",
+          },
+        },
+        {
+          headers: {
+            Authorization: `Basic ${encodedCredentials}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const order = response.data;
+      console.log("******** order", order);
+      var options = {
+        description: "Payment for ICY Hotels",
+        image:
+          "https://res.cloudinary.com/dojp57ix9/image/upload/v1739643319/Screenshot_2025-02-15_233148_m9xwgg.png",
+        currency: "INR",
+        key: "rzp_live_oz8kr6Ix29mKyC",
+        amount: "100", // Amount in paise (20000 paise = 200 INR)
+        name: "ICY Hotels",
+        order_id: order.id, // Use the order ID created using Orders API.
+        prefill: {
+          email: "vivek@gmail.com",
+          contact: "7055029251",
+          name: "Vivek Panwar",
+        },
+        theme: { color: "#ffb000" },
+      };
+
+      console.log("******* options", options);
+
+      RazorpayCheckout.open(options)
+        .then((data: any) => {
+          // handle success
+          // Alert.alert(Success: ${data.razorpay_payment_id});
+          console.log("Payment Successful");
+        })
+        .catch((error: any) => {
+          // handle failure
+          // Alert.alert(Error: ${error.code} | ${error.description});
+          console.error(error);
+        });
+    } catch (error) {
+      console.error("Order creation failed:", error);
+      // Alert.alert("Order creation failed", error.message);
+    }
+  };
   const handleCheckAvailability = async () => {
-    
     try {
       const res = await axios.get(`${baseUrl}/hotels/confirm-availability`, {
         params: {
@@ -85,7 +153,7 @@ const PaymentScreen = () => {
   const confirmBooking = async () => {
     setLoading(true);
     const availability = await handleCheckAvailability();
-    if (!availability){
+    if (!availability) {
       setIsPayNow(false);
       setLoading(false);
       setIsPayatHotel(false);
@@ -101,9 +169,9 @@ const PaymentScreen = () => {
         checkOutDate,
         totalRooms: numRooms,
         status: "Confirmed",
-        paymentStatus: isPayNow?"Paid":"Pending",
+        paymentStatus: isPayNow ? "Paid" : "Pending",
         transactionId: "xyz",
-        totalPrice: isPayNow?((Number(price) ?? 0) * 0.95).toFixed(2):price,
+        totalPrice: isPayNow ? ((Number(price) ?? 0) * 0.95).toFixed(2) : price,
       });
 
       if (res.data) {
@@ -119,14 +187,13 @@ const PaymentScreen = () => {
       }
     } catch (error) {
       console.error("Error booking hotel:", error);
-      setIsPayNow(false)
-      setIsPayatHotel(false);;
+      setIsPayNow(false);
+      setIsPayatHotel(false);
       setIsSuccess(false);
       showPopup();
-    }
-    finally {
+    } finally {
       setLoading(false);
-      setIsPayNow(false)
+      setIsPayNow(false);
       setIsPayatHotel(false);
     }
   };
@@ -642,12 +709,12 @@ const PaymentScreen = () => {
                 justifyContent: "center",
               }}
               onPress={() => {
-                setIsPayatHotel(true)
+                setIsPayatHotel(true);
                 handlePress();
               }}
               disabled={loading}
             >
-              { isPayatHotel? (
+              {isPayatHotel ? (
                 <ActivityIndicator size={36} color="#fbb000" />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -698,13 +765,15 @@ const PaymentScreen = () => {
               }}
               onPress={() => {
                 setIsPayNow(true);
-                handlePress();
+                // handlePress();
+                PayNow();
+
                 // console.log("Proceeding to payment...");
               }}
               disabled={loading}
               activeOpacity={0.7}
             >
-              {isPayNow? (
+              {isPayNow ? (
                 <ActivityIndicator color="green" size={36} />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -751,9 +820,7 @@ const PaymentScreen = () => {
               )}
             </TouchableOpacity>
           </View>
-          
         </View>
-        
       </View>
     </SafeAreaView>
   );
