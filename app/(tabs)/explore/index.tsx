@@ -1,37 +1,34 @@
 import { baseUrl } from "@/constants/server";
-import { setCheckInDate, setCheckOutDate, setHotels, setSelectedHotel } from "@/redux/reducers/hotelSlice";
-import { useFocusEffect } from "@react-navigation/native";
+import {
+  setCheckInDate,
+  setCheckOutDate,
+  setHotels,
+  setSelectedHotel,
+} from "@/redux/reducers/hotelSlice";
 import axios from "axios";
-import { useLocalSearchParams, useRouter, useSegments } from "expo-router";
-import { useSearchParams } from "expo-router/build/hooks";
-import React, { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   FlatList,
-  Image,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
   StatusBar,
   ActivityIndicator,
-  BackHandler,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
 
-
-
 const ExploreScreen = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const segments = useSegments();
   const router = useRouter();
   const { city } = useLocalSearchParams();
   // console.log(city)
-  const hasFetched = useRef(false);
   const hotels = useSelector((state: any) => state.hotel.hotels);
   const searchLoader = useSelector((state: any) => state.hotel.searchLoader);
   const [query, setQuery] = useState("");
@@ -42,7 +39,6 @@ const ExploreScreen = () => {
       fetchHotels();
     }
   }, [city]);
-  
 
   const fetchHotels = async () => {
     setLoading(true);
@@ -87,7 +83,7 @@ const ExploreScreen = () => {
       setLoading(false);
     }
   };
- const renderStars = (rating: any) => {
+  const renderStars = (rating: any) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       if (i <= Math.floor(rating)) {
@@ -115,30 +111,38 @@ const ExploreScreen = () => {
   // Render individual hotel cards with added details such as room type, category, and ratings
   const renderHotelCard = ({ item }: any) => {
     // console.log(item[1].price, "price");
-
     return (
-      <TouchableOpacity key={item[0]._id}
+      <TouchableOpacity
+        key={item[0]._id}
         onPress={() => {
           dispatch(setSelectedHotel(item));
           const today = new Date();
-              const tomorrow = new Date();
-              tomorrow.setDate(today.getDate() + 1); // Add one day to today's date
-              
-              // Format the date as YYYY-MM-DD using local date methods
-              const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
-              const tomorrowString = `${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}-${tomorrow.getDate().toString().padStart(2, '0')}`;
-            
-              console.log("today:", todayString, "tomorrow:", tomorrowString);
-              
-              dispatch(setCheckInDate(todayString));
-              dispatch(setCheckOutDate(tomorrowString));
+          const tomorrow = new Date();
+          tomorrow.setDate(today.getDate() + 1); // Add one day to today's date
+
+          // Format the date as YYYY-MM-DD using local date methods
+          const todayString = `${today.getFullYear()}-${(today.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+          const tomorrowString = `${tomorrow.getFullYear()}-${(
+            tomorrow.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, "0")}-${tomorrow
+            .getDate()
+            .toString()
+            .padStart(2, "0")}`;
+
+          console.log("today:", todayString, "tomorrow:", tomorrowString);
+
+          dispatch(setCheckInDate(todayString));
+          dispatch(setCheckOutDate(tomorrowString));
           router.push("/(tabs)/explore/booking/hotelDescription");
         }}
         style={{
           backgroundColor: "#fff",
           borderRadius: 12,
           marginBottom: 16,
-
           overflow: "hidden",
           shadowColor: "#bdbdbd",
           shadowOpacity: 0.1,
@@ -160,9 +164,6 @@ const ExploreScreen = () => {
             borderBottomLeftRadius: 12,
 
             marginRight: 12,
-            
-
-            
           }}
           resizeMode={FastImage.resizeMode.cover} // Correct usage of resizeMode
         />
@@ -183,16 +184,15 @@ const ExploreScreen = () => {
           </Text>
 
           {/* Rating Display */}
-          {item[0]?.ratings?.totalRating > 0 && item[0]?.ratings?.totalUsers>0 ? (
+          {item[0]?.ratings?.totalRating > 0 &&
+          item[0]?.ratings?.totalUsers > 0 ? (
             <View style={{ flexDirection: "row", marginBottom: 4 }}>
-             {renderStars(
-                    item[0]?.ratings?.totalRating > 0 &&
-                      item[0]?.ratings?.totalUsers > 0
-                      ? item[0]?.ratings?.totalRating /
-                          item[0]?.ratings?.totalUsers
-                      : 0
-                  )}
-              
+              {renderStars(
+                item[0]?.ratings?.totalRating > 0 &&
+                  item[0]?.ratings?.totalUsers > 0
+                  ? item[0]?.ratings?.totalRating / item[0]?.ratings?.totalUsers
+                  : 0
+              )}
             </View>
           ) : null}
 
@@ -200,13 +200,16 @@ const ExploreScreen = () => {
           <Text
             style={{
               fontSize: 14,
-              fontFamily:"Nunito-Regular",
+              fontFamily: "Nunito-Regular",
               color: "#ff8c00",
               marginTop: 8,
-              
             }}
-          >Starts from :  
-          <Text style={{color:"#6EB057", fontFamily:"Nunito-SemiBold"}}> ₹{item[1]?.price}/night</Text>
+          >
+            Starts from :
+            <Text style={{ color: "#6EB057", fontFamily: "Nunito-SemiBold" }}>
+              {" "}
+              ₹{item[1]?.price}/night
+            </Text>
           </Text>
         </View>
       </TouchableOpacity>
@@ -250,7 +253,7 @@ const ExploreScreen = () => {
           <TextInput
             placeholder="Search hotels..."
             style={{ fontSize: 16, color: "#555", flex: 1 }}
-            onChangeText={(val) => setQuery(val)} // Use onChangeText instead of onChange
+            onChangeText={(val) => setQuery(val)} 
             value={query}
             onSubmitEditing={fetchHotelsSearch}
           />

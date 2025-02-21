@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 
 export default function RootLayout() {
 
-
+   
   return (
   
       <Stack initialRouteName="index" screenOptions={{ headerShown: false }}>

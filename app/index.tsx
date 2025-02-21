@@ -1,6 +1,5 @@
 import { View, Text, Image, Dimensions } from 'react-native'
 import React, { useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 
 const {width,height}=Dimensions.get("window")
@@ -10,7 +9,7 @@ const index = () => {
     useEffect(() => {
         setTimeout(() => { router.push('/(tabs)/home') });
     }, []);
-
+    console.log("starting");
     return (
        <View style={{backgroundColor:"#fff",width:width,height:1400}}>
 

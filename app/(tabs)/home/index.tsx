@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRouter, useSegments } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, Dimensions, BackHandler } from 'react-native';
+import { View, Text,TouchableOpacity, ScrollView, Image, Modal, Dimensions, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,9 +24,6 @@ const popularCities = [
 ];
 
 const HomeScreen = () => {
-  const [destination, setDestination] = useState('');
-  const [dates, setDates] = useState('');
-  const [roomsGuests, setRoomsGuests] = useState('');
   const [datesModal, setDatesModal] = useState(false);
   const [guests, setGuests] = useState<number>(1);
   const [rooms, setRoomsLocal] = useState<number>(1);
@@ -37,7 +34,6 @@ const HomeScreen = () => {
   const checkInDate = useSelector((state: any) => state.hotel.checkInDate)
   const checkOutDate = useSelector((state: any) => state.hotel.checkOutDate)
   const room = useSelector((state: any) => state.hotel.rooms);
-  const [loc, setLoc] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [address, setAddress] = useState("")
@@ -49,39 +45,39 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const backAction = () => {
-      // Check if the user is on the Home screen
       if (segments.length === 2 && segments[1] === 'home') {
-        BackHandler.exitApp(); // Exit the app
+        BackHandler.exitApp(); 
       } else {
-        router.back(); // Go back to the previous screen
+        router.back();
       }
-      return true; // Indicate that the back action is handled
+      return true;
     };
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+       backAction
     );
 
-    return () => backHandler.remove(); // Clean up the event listener
+    return () => backHandler.remove(); 
   }, [segments, router]);
+
 
   useEffect(() => {
     const today = new Date();
     const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1); // Add one day to today's date
+    tomorrow.setDate(today.getDate() + 1);
     
     // Format the date as YYYY-MM-DD using local date methods
     const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
     const tomorrowString = `${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}-${tomorrow.getDate().toString().padStart(2, '0')}`;
   
-    console.log("today:", todayString, "tomorrow:", tomorrowString);
+    console.log("today:", todayString, "tomorrow:", tomorrowString,"Home");
     
     dispatch(setCheckInDate(todayString));
     dispatch(setCheckOutDate(tomorrowString));
   }, []);
   
-  
+  console.log("Home: Me Umesh Patel ");
 
   const fetchLocation = async () => {
     setLoading(true);

@@ -42,35 +42,50 @@ const PaymentScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [isPayatHotel, setIsPayatHotel] = useState(false);
 
-  const handlePress = () => {
+
+const checkInDateStr: string = Array.isArray(checkInDate) ? checkInDate[0] : checkInDate;
+const checkOutDateStr: string = Array.isArray(checkOutDate) ? checkOutDate[0] : checkOutDate;
+const checkIn: Date = new Date(checkInDateStr);
+const checkOut: Date = new Date(checkOutDateStr);
+if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+  throw new Error("Invalid date format");
+}
+const diffTime: number = checkOut.getTime() - checkIn.getTime();
+const numNights: number = diffTime / (1000 * 60 * 60 * 24);
+const totalNights: number = Math.max(numNights, 1);
+
+  const handlePress = async (type: any) => {
     if (!user?._id) {
       setShowLoginModal(true);
     } else {
-      confirmBooking();
+      await confirmBooking(type);
     }
   };
 
   const PayNow = async () => {
-    const username = "rzp_live_oz8kr6Ix29mKyC";
-    const password = "IADDTICFJ2oXYLX3H2pLjvcx";
+    const username = "rzp_test_pBMTJaj34QXvtD";
+    const password = "66b51ryqjqhytnLET6iEbqUC";
     const credentials = `${username}:${password}`;
     const encodedCredentials = btoa(credentials);
+    const payamount = (Number(price) ?? 0)*totalNights * 0.95 * 100;
     console.log(
       "8**********",
       username,
       password,
       credentials,
-      encodedCredentials
+      encodedCredentials,
+      payamount
     );
+
     try {
       const response = await axios.post(
         "https://api.razorpay.com/v1/orders",
         {
-          amount: 500,
+          amount: payamount,
           currency: "INR",
           receipt: "userDetails._id",
           notes: {
-            notes_key_1: "Welcome to CulturTap-Genie",
+            notes_key_1: "Welcome to Icy Hotels",
             notes_key_2: "Eat-Sleep-Code-Repeat.",
           },
         },
@@ -89,8 +104,8 @@ const PaymentScreen = () => {
         image:
           "https://res.cloudinary.com/dojp57ix9/image/upload/v1739643319/Screenshot_2025-02-15_233148_m9xwgg.png",
         currency: "INR",
-        key: "rzp_live_oz8kr6Ix29mKyC",
-        amount: "100", // Amount in paise (20000 paise = 200 INR)
+        key: "rzp_test_pBMTJaj34QXvtD",
+        amount: payamount, // Amount in paise (20000 paise = 200 INR)
         name: "ICY Hotels",
         order_id: order.id, // Use the order ID created using Orders API.
         prefill: {
@@ -103,19 +118,46 @@ const PaymentScreen = () => {
 
       console.log("******* options", options);
 
-      RazorpayCheckout.open(options)
-        .then((data: any) => {
-          // handle success
-          // Alert.alert(Success: ${data.razorpay_payment_id});
-          console.log("Payment Successful");
-        })
-        .catch((error: any) => {
-          // handle failure
-          // Alert.alert(Error: ${error.code} | ${error.description});
-          console.error(error);
-        });
+      // await RazorpayCheckout.open(options)
+      //   .then((data: any) => {
+      //     // handle success
+      //     // Alert.alert(Success: ${data.razorpay_payment_id});
+
+      //     console.log("Payment Successful",data);
+      //     // console.log("id",data.razorpay_payment_id);
+      //     return data.razorpay_payment_id;
+      //   })
+      //   .catch((error: any) => {
+      //     // handle failure
+      //     // Alert.alert(Error: ${error.code} | ${error.description});
+      //     console.error(error);
+      //     setLoading(false);
+      //     setIsPayNow(false);
+      //     setIsPayatHotel(false);
+      //     return null;
+      //   });
+      try {
+        const data = await RazorpayCheckout.open(options);
+        console.log("Payment Successful", data);
+        if (!data || !data.razorpay_payment_id) {
+          throw new Error(
+            "No transaction ID received, payment was not completed."
+          );
+        }
+        return data.razorpay_payment_id;
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+        setIsPayNow(false);
+        setIsPayatHotel(false);
+        return null;
+      }
     } catch (error) {
       console.error("Order creation failed:", error);
+      setLoading(false);
+      setIsPayNow(false);
+      setIsPayatHotel(false);
+      return null;
       // Alert.alert("Order creation failed", error.message);
     }
   };
@@ -132,16 +174,13 @@ const PaymentScreen = () => {
       });
 
       if (res.status === 200 && res.data) {
-        // setIsAvailable(true);
         return true;
       } else {
-        // setIsAvailable(false);
         setShowModal(true);
         return false;
       }
     } catch (error) {
       console.error("Error checking availability:", error);
-      // setIsAvailable(false);
       setLoading(false);
       setShowModal(true);
       return false;
@@ -150,14 +189,38 @@ const PaymentScreen = () => {
     }
   };
 
-  const confirmBooking = async () => {
+  const showPopup = () => {
+    setIsVisible(true);
+    const timeout = setTimeout(() => {
+      setIsVisible(false);
+      router.back();
+    }, 3000);
+    return () => clearTimeout(timeout);
+  };
+
+  const confirmBooking = async (type: any) => {
     setLoading(true);
     const availability = await handleCheckAvailability();
     if (!availability) {
+      console.log("Room not available");
       setIsPayNow(false);
       setLoading(false);
       setIsPayatHotel(false);
       return;
+    }
+
+    let transactionId = "";
+
+    if (type === "online") {
+      transactionId = await PayNow();
+      console.log("Payment Transaction ID:", transactionId);
+
+      if (!transactionId) {
+        setIsPayNow(false);
+        setLoading(false);
+        setIsPayatHotel(false);
+        return;
+      }
     }
 
     console.log("booking");
@@ -169,9 +232,10 @@ const PaymentScreen = () => {
         checkOutDate,
         totalRooms: numRooms,
         status: "Confirmed",
-        paymentStatus: isPayNow ? "Paid" : "Pending",
-        transactionId: "xyz",
-        totalPrice: isPayNow ? ((Number(price) ?? 0) * 0.95).toFixed(2) : price,
+        paymentStatus: type === "online" ? "Paid" : "Pending",
+        transactionId: type === "online" ? transactionId : "XYZ",
+        totalPrice:
+          type === "online" ? ((Number(price) ?? 0)*totalNights* 0.95).toFixed(2) : price,
       });
 
       if (res.data) {
@@ -196,15 +260,6 @@ const PaymentScreen = () => {
       setIsPayNow(false);
       setIsPayatHotel(false);
     }
-  };
-
-  const showPopup = () => {
-    setIsVisible(true);
-    const timeout = setTimeout(() => {
-      setIsVisible(false);
-      router.back();
-    }, 4000);
-    return () => clearTimeout(timeout);
   };
 
   return (
@@ -508,7 +563,7 @@ const PaymentScreen = () => {
                 <LottieView
                   source={require("../../../../assets/lottie/success.json")}
                   autoPlay
-                  loop
+                  loop={false}
                   style={{ width: width, height: height }} // Adjust size
                 />
               )}
@@ -516,7 +571,7 @@ const PaymentScreen = () => {
                 <LottieView
                   source={require("../../../../assets/lottie/failure.json")}
                   autoPlay
-                  loop
+                  loop={false}
                   style={{ width: width, height: height }} // Adjust size
                 />
               )}
@@ -708,13 +763,13 @@ const PaymentScreen = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              onPress={() => {
+              onPress={async () => {
                 setIsPayatHotel(true);
-                handlePress();
+                await handlePress("payAtHotel");
               }}
               disabled={loading}
             >
-              {isPayatHotel ? (
+              {isPayatHotel && user ? (
                 <ActivityIndicator size={36} color="#fbb000" />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -737,7 +792,7 @@ const PaymentScreen = () => {
                       textTransform: "uppercase",
                     }}
                   >
-                    ₹{price || 0}
+                    ₹{(Number(price)*totalNights).toFixed(2)}
                   </Text>
                 </View>
               )}
@@ -763,17 +818,15 @@ const PaymentScreen = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              onPress={() => {
+              onPress={async () => {
                 setIsPayNow(true);
-                // handlePress();
-                PayNow();
-
+                await handlePress("online");
                 // console.log("Proceeding to payment...");
               }}
               disabled={loading}
               activeOpacity={0.7}
             >
-              {isPayNow ? (
+              {isPayNow && user ? (
                 <ActivityIndicator color="green" size={36} />
               ) : (
                 <View style={{ alignItems: "center" }}>
@@ -802,7 +855,7 @@ const PaymentScreen = () => {
                         marginRight: 6,
                       }}
                     >
-                      ₹{price || 0}
+                      ₹{Number(price)*totalNights}
                     </Text>
 
                     {/* Discounted Price */}
@@ -813,7 +866,7 @@ const PaymentScreen = () => {
                         fontFamily: "Nunito-Bold",
                       }}
                     >
-                      ₹{(Number(price) * 0.95).toFixed(2)}
+                      ₹{(Number(price)*totalNights * 0.95).toFixed(2)}
                     </Text>
                   </View>
                 </View>

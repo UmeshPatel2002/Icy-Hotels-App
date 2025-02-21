@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,7 +7,6 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import * as SplashScreen from "expo-splash-screen";
-import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +21,6 @@ const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
 }) => {
   const opacity = useSharedValue(1);
   const scale = useSharedValue(1);
-  const router=useRouter();
 
   useEffect(() => {
     const timeout = setTimeout(() => {

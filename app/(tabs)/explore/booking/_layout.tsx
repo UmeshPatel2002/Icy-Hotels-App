@@ -7,7 +7,7 @@ import 'react-native-reanimated';
 
 
 export default function RootLayout() {
-
+  console.log("booking layout");
 
   return (
   

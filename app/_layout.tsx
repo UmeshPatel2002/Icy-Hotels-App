@@ -52,6 +52,7 @@ export default function RootLayout() {
   if (!loaded || isSplashVisible) {
     return <AnimatedSplashScreen onAnimationFinish={handleAnimationFinish} />;
   }
+  console.log("RootLayout rendered");
 
   return (
     <Provider store={store}>

@@ -5,11 +5,11 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Button,
   Modal,
   TextInput,
+  Pressable,
 } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,7 +61,6 @@ const UserProfile = () => {
       await auth().signOut();
       dispatch(setUserDetails(null));
       dispatch(setPhone(""));
-
       setLogOutModal(false);
     } catch (error) {
       console.error("Error signing out: ", error);
@@ -83,7 +82,7 @@ const UserProfile = () => {
 
     if (!result?.canceled) {
       setImage(result?.assets[0]?.uri);
-      // console.log(result,"uriiiiiii");
+      // console.log(result,"image uri");
       updateProfileImage(result?.assets[0]);
     }
   };
@@ -94,7 +93,6 @@ const UserProfile = () => {
         console.error("Invalid image provided.", img);
         return;
       }
-
       setLoading(true);
       const formData = new FormData();
       if (img) {
@@ -341,8 +339,8 @@ const UserProfile = () => {
                   justifyContent: "center",
                 }}
                 onPress={() => {
-                  setLogOutModal(true); // show logout modal
-                  console.log("logout");
+                  setLogOutModal(true);
+                  // console.log("logout");
                 }}
               >
                 <Ionicons name="log-out-outline" size={20} color="#fff" />
@@ -440,53 +438,107 @@ const UserProfile = () => {
         </View>
       </ScrollView>
       <Modal
-        transparent={true}
-        visible={logOutModal}
-        animationType="fade"
-        onRequestClose={handleCancel} // Close modal when back button is pressed on Android
+      transparent
+      visible={logOutModal}
+      animationType="fade"
+      onRequestClose={handleCancel}
+    >
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        }}
       >
         <View
           style={{
-            flex: 1,
-            justifyContent: "center",
+            backgroundColor: "white",
+            padding: 30,
+            borderRadius: 16,
+            width: 320,
             alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 8,
           }}
         >
-          <View
+          {/* Logout Message */}
+          <Text
             style={{
-              backgroundColor: "white",
-              padding: 20,
-              paddingVertical: 60,
-              borderRadius: 10,
-              width: 300,
-              alignItems: "center",
+              fontSize: 20,
+              fontFamily: "Nunito-SemiBold",
+              marginBottom: 15,
+              color: "#333",
+              textAlign: "center",
             }}
           >
-            <Text
-              style={{ fontSize: 18, marginBottom: 20, fontWeight: "bold" }}
-            >
-              Are you sure you want to log out?
-            </Text>
-            <View
+            Are you sure you want to log out?
+          </Text>
+
+          {/* Buttons Container */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              marginTop: 20,
+            }}
+          >
+            {/* Cancel Button (Soft Blue) */}
+            <Pressable
+              onPress={handleCancel}
               style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                width: "100%",
+                flex: 1,
+                backgroundColor: "#FFF6DC",
+                borderColor: "#fbb000",
+                borderWidth: 1,
+                paddingVertical: 12,
+                marginHorizontal: 5,
+                borderRadius: 10,
+                alignItems: "center",
               }}
             >
-              <Button title="Cancel" onPress={handleCancel} color="gray" />
-              <Button
-                title="Confirm"
-                onPress={() => {
-                  logout();
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: "Nunito-Bold",
+                  color: "#fbb000",
                 }}
-                color="red"
-              />
-            </View>
+              >
+                Cancel
+              </Text>
+            </Pressable>
+
+            {/* Confirm Button (Light Red) */}
+            <Pressable
+              onPress={logout}
+              style={{
+                flex: 1,
+                backgroundColor:"#ffdddd",
+                borderColor: "#ff4d4d",
+                borderWidth: 1,
+                paddingVertical: 12,
+                marginHorizontal: 5,
+                borderRadius: 10,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: "Nunito-Bold",
+                  color: "#d32f2f",
+                }}
+              >
+                Confirm
+              </Text>
+            </Pressable>
           </View>
         </View>
-      </Modal>
+      </View>
+    </Modal>
 
       <Modal
         transparent={true}

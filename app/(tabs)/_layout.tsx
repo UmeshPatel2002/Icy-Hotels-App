@@ -1,23 +1,18 @@
 import { Tabs, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { baseUrl } from '@/constants/server';
 import { setHotels, setSearchLoader } from '@/redux/reducers/hotelSlice';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const router = useRouter();
   const dispatch=useDispatch();
  
-
+  
    const fetchHotelsSearch = async () => {
       // dispatch(setSearchLoader(true));
       console.log("explore fteching")
@@ -35,7 +30,6 @@ export default function TabLayout() {
         console.error("Error fetching hotels without:", error);
       } finally {
         dispatch(setSearchLoader(false));
-
       }
     };
 
@@ -57,6 +51,8 @@ export default function TabLayout() {
     console.log('Navigating to Profile');
     router.push('/profile'); // Navigate to the Profile screen
   };
+
+  console.log("tab layout rendered");
 
   return (
     <Tabs

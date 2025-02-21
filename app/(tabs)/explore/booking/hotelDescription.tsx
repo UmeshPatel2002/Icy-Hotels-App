@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -44,10 +44,38 @@ const HotelDescriptionScreen = () => {
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [descCharLimit, setDescCharLimit] = useState(80);
   const [locationCharLimit, setLocationCharLimit] = useState(80);
-
-  const roomType = Array.isArray(hotel) ? hotel.slice(1) : []; // Ensure hotel is an array, or use an empty array if not
-
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const imageScrollViewRef = useRef<ScrollView>(null);
+  const totalImages = hotel[0]?.images?.length || 1;
+  const imageSize = width * 0.9;
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (hotel[0]?.images?.length) {
+        currentIndex = (currentIndex + 1) % totalImages;
+
+        // Animate scrolling
+        imageScrollViewRef.current?.scrollTo({
+          x: currentIndex * imageSize,
+          animated: true,
+        });
+
+        // Animate zooming
+        Animated.timing(scrollX, {
+          toValue: currentIndex * imageSize,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start();
+      }
+    },2000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [hotel]);
+
+  const roomType = Array.isArray(hotel) ? hotel.slice(1) : [];
 
   const updateRooms = (newRooms: number) => {
     // console.log("newRooms", newRooms);
@@ -60,15 +88,20 @@ const HotelDescriptionScreen = () => {
     setGuests(newGuestCount);
   };
 
-  const headerTranslate = scrollY.interpolate({
-    inputRange: [0, imageHeight],
-    outputRange: [0, -imageHeight / 2],
-    extrapolate: "clamp",
-  });
+  // const headerTranslate = scrollY.interpolate({
+  //   inputRange: [0, imageHeight],
+  //   outputRange: [0, -imageHeight / 2],
+  //   extrapolate: "clamp",
+  // });
 
-  const imageScale = scrollY.interpolate({
-    inputRange: [-imageHeight, 0],
-    outputRange: [2, 1],
+  // const imageScale = scrollY.interpolate({
+  //   inputRange: [-imageHeight, 0],
+  //   outputRange: [2, 1],
+  //   extrapolate: "clamp",
+  // });
+  const imageScale = scrollX.interpolate({
+    inputRange: [0, imageSize * (totalImages - 1)],
+    outputRange: [1, 1.2], // Scale between 1x and 1.2x
     extrapolate: "clamp",
   });
 
@@ -178,7 +211,7 @@ const HotelDescriptionScreen = () => {
           scrollEventThrottle={16}
         >
           {/* Parallax Images */}
-          <Animated.View
+          {/* <Animated.View
             style={{
               height: imageHeight,
               transform: [
@@ -200,6 +233,36 @@ const HotelDescriptionScreen = () => {
                       borderRadius: 15,
                     }}
                     resizeMode={FastImage.resizeMode.cover} // Correct usage of resizeMode
+                  />
+                ))}
+            </ScrollView>
+          </Animated.View> */}
+          <Animated.View
+            style={{
+              width: imageSize,
+              height: imageSize,
+              transform: [{ scale: imageScale }],
+              overflow: "hidden",
+              borderRadius: 15,
+            }}
+          >
+            <ScrollView
+              ref={imageScrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={16}
+            >
+              {hotel[0]?.images &&
+                hotel[0]?.images.map((img: any, index: number) => (
+                  <FastImage
+                    key={index}
+                    source={{ uri: img }}
+                    style={{
+                      width: imageSize,
+                      height: imageSize,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
                   />
                 ))}
             </ScrollView>
@@ -682,45 +745,45 @@ const HotelDescriptionScreen = () => {
             }}
           >
             {/* Rating Section */}
-            
-              <View
+
+            <View
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#ccc",
+                paddingBottom: 4,
+                width: "100%",
+              }}
+            >
+              <Text
                 style={{
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#ccc",
-                  paddingBottom: 4,
-                  width: "100%",
+                  fontSize: 18,
+                  fontFamily: "Nunito-SemiBold",
+                  marginBottom: 8,
+                  color: "#333",
                 }}
               >
+                Ratings & Reviews:
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {renderStars(
+                  hotel[0]?.ratings?.totalRating > 0 &&
+                    hotel[0]?.ratings?.totalUsers > 0
+                    ? hotel[0]?.ratings?.totalRating /
+                        hotel[0]?.ratings?.totalUsers
+                    : 0
+                )}
                 <Text
                   style={{
-                    fontSize: 18,
-                    fontFamily: "Nunito-SemiBold",
-                    marginBottom: 8,
-                    color: "#333",
+                    fontSize: 16,
+                    fontFamily: "Nunito-Regular",
+                    color: "#777",
+                    marginLeft: 8,
                   }}
                 >
-                  Ratings & Reviews:
+                  ({hotel[0]?.ratings?.totalUsers || 0} reviews)
                 </Text>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  {renderStars(
-                    hotel[0]?.ratings?.totalRating > 0 &&
-                      hotel[0]?.ratings?.totalUsers > 0
-                      ? hotel[0]?.ratings?.totalRating /
-                          hotel[0]?.ratings?.totalUsers
-                      : 0
-                  )}
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: "Nunito-Regular",
-                      color: "#777",
-                      marginLeft: 8,
-                    }}
-                  >
-                    ({hotel[0]?.ratings?.totalUsers || 0} reviews)
-                  </Text>
-                </View>
               </View>
+            </View>
             <HotelReviews hotel={hotel} userId={user?._id} />
           </View>
         </Animated.ScrollView>
@@ -753,7 +816,7 @@ const HotelDescriptionScreen = () => {
             }}
           >
             <Image
-              source={require('../../../../assets/images/icon.png')}
+              source={require("../../../../assets/images/icon.png")}
               style={{
                 width: 80,
                 height: 80,
@@ -781,10 +844,9 @@ const HotelDescriptionScreen = () => {
                 justifyContent: "space-between",
                 width: "100%",
                 marginTop: 10,
-                gap:10,
+                gap: 10,
               }}
             >
-
               <TouchableOpacity
                 style={{
                   flex: 1,
